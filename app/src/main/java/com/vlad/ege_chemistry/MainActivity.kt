@@ -20,8 +20,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
 
-    private var isDrawerOpen = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,7 +63,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             // Закрываем Navigation Drawer после выбора элемента
-            isDrawerOpen = !isDrawerOpen
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
@@ -78,12 +75,11 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Обработка нажатия на значок меню в ActionBar (для открытия Navigation Drawer)
         if (item.itemId == android.R.id.home) {
-            if(isDrawerOpen){
+            if(drawerLayout.isDrawerOpen(GravityCompat.START)){
                 drawerLayout.closeDrawer(GravityCompat.START)
             }else{
                 drawerLayout.openDrawer(GravityCompat.START)
             }
-            isDrawerOpen = !isDrawerOpen
             return true
         }
         return super.onOptionsItemSelected(item)
