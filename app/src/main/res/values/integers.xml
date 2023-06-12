@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="teory_count">30</integer>
-    <integer name="test_count">0</integer>
+    <integer name="test_count">7</integer>
     <integer name="trial_variants_count">0</integer>
+    <integer name="exercisesInTests_count">3</integer>
 </resources>

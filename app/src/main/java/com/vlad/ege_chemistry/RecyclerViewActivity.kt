@@ -47,7 +47,7 @@ class RecyclerViewActivity : AppCompatActivity() {
         Log.d(TAG,userSelectedMode)
         when(userSelectedMode){
             "teory" -> {
-               var count = resources.getInteger(R.integer.teory_count)
+               val count = resources.getInteger(R.integer.teory_count)
                 var textResourceId: Int
                 for (i in 1..count){
                     textResourceId = resources.getIdentifier("teory$i","string",packageName)
@@ -55,11 +55,12 @@ class RecyclerViewActivity : AppCompatActivity() {
                 }
             }
             "test" -> {
-                recyclerViewItems.add("1 test Item")
-                recyclerViewItems.add("2 test Item")
-                recyclerViewItems.add("3 test Item")
-                recyclerViewItems.add("4 test Item")
-                recyclerViewItems.add("5 test Item")
+                val count = resources.getInteger(R.integer.test_count)
+                var textResourceId: Int
+                for (i in 1..count){
+                    textResourceId = resources.getIdentifier("test_name$i","string",packageName)
+                    recyclerViewItems.add(resources.getString(textResourceId))
+                }
             }
             "trialVariants" -> {
                 recyclerViewItems.add("1 trialVariants Item")
@@ -95,7 +96,7 @@ class RecyclerViewActivity : AppCompatActivity() {
                 Log.e(TAG,"ERROR!")
             }
         }
-        intent.putExtra("position",position)
+        intent.putExtra("position",position+1)
         startActivity(intent)
     }
     }
