@@ -3,18 +3,22 @@ package com.vlad.ege_chemistry
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.vlad.ege_chemistry.databinding.ActivityTestBinding
 
 class TestActivity : AppCompatActivity() {
-    var position = 0
-    var numberOfQuestion:Int = 1
+    private var position = 0
+    private var numberOfQuestion:Int = 1
     lateinit var binding:ActivityTestBinding
-    var userAnswers = ArrayList<String>()
-    var finishedTest = false
+    private var userAnswers = ArrayList<String>()
+    private var finishedTest = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         binding = DataBindingUtil.setContentView<ActivityTestBinding>(this, R.layout.activity_test)
         position = intent.getIntExtra("position",1)
 
@@ -37,14 +41,14 @@ class TestActivity : AppCompatActivity() {
     }
 
     private fun inflateExercise() {
-        var textResourceId = resources.getIdentifier("test${position}_$numberOfQuestion","string",packageName)
+        val textResourceId = resources.getIdentifier("test${position}_$numberOfQuestion","string",packageName)
         binding.testTextView.text = resources.getString(textResourceId)
         binding.testEditText.setText("")
     }
 
     private fun finishTest() {
-        var textResourceId = resources.getIdentifier("testAnswer$position","string",packageName)
-        var correctAnswers = resources.getString(textResourceId).split(":")
+        val textResourceId = resources.getIdentifier("testAnswer$position","string",packageName)
+        val correctAnswers = resources.getString(textResourceId).split(":")
         var quantityOfCorrectAnswers = 0
         for (i in correctAnswers.indices){
             if(userAnswers[i] == correctAnswers[i]){
@@ -54,7 +58,7 @@ class TestActivity : AppCompatActivity() {
         if (quantityOfCorrectAnswers == correctAnswers.size){
             binding.testTextView.text = resources.getString(R.string.correct_answers)
         }else{
-            var string =
+            val string =
                 resources.getString(R.string.not_correct_answers) + quantityOfCorrectAnswers +
                         "/" + resources.getInteger(R.integer.exercisesInTests_count)
             binding.testTextView.text = string
@@ -64,5 +68,11 @@ class TestActivity : AppCompatActivity() {
         binding.testAnswerButton.text = "Окей"
         finishedTest = true
     }
-
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }

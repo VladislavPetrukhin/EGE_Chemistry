@@ -4,24 +4,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.vlad.ege_chemistry.databinding.ActivityRecyclerviewBinding
 
 class RecyclerViewActivity : AppCompatActivity() {
 
-    var recyclerViewItems: ArrayList<String> = ArrayList<String>()
-    val TAG = "LogRecyclerViewActivity"
-    var userSelectedMode = ""
+    private val recyclerViewItems: ArrayList<String> = ArrayList<String>()
+    private val TAG = "LogRecyclerViewActivity"
+    private var userSelectedMode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val binding = DataBindingUtil.setContentView<ActivityRecyclerviewBinding>(this, R.layout.activity_recyclerview)
         userSelectedMode = intent.getStringExtra("type").toString()
@@ -99,43 +97,12 @@ class RecyclerViewActivity : AppCompatActivity() {
         intent.putExtra("position",position+1)
         startActivity(intent)
     }
-    }
-
-class RecyclerViewAdapter(
-    private val recyclerViewItems: ArrayList<String>,
-                          private val recyclerViewActivity: RecyclerViewActivity) :
-    RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
-
-    class ViewHolder(itemView: View, private val recyclerViewActivity: RecyclerViewActivity)
-        : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.itemTextView)
-
-        init {
-            itemView.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    recyclerViewActivity.goToActivity(position)
-                }
-            }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
         }
+        return super.onOptionsItemSelected(item)
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.recycler_view_item, parent, false)
-        return ViewHolder(view,recyclerViewActivity)
-
-    }
-
-    override fun getItemCount(): Int {
-        return recyclerViewItems.size
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item: String = recyclerViewItems[position]
-        holder.textView.text = item
-    }
-
 }
 
