@@ -27,17 +27,17 @@ class MainFragment : Fragment() {
 
         binding.buttonTeory.setOnClickListener {
             val intent = Intent(requireContext(), RecyclerViewActivity::class.java)
-            intent.putExtra("type","teory")
+            intent.putExtra("userSelectedMode","teory")
             startActivity(intent)
         }
         binding.buttonTest.setOnClickListener {
             val intent = Intent(requireContext(), RecyclerViewActivity::class.java)
-            intent.putExtra("type","test")
+            intent.putExtra("userSelectedMode","test")
             startActivity(intent)
         }
         binding.buttonTrialVariants.setOnClickListener {
             val intent = Intent(requireContext(), RecyclerViewActivity::class.java)
-            intent.putExtra("type","trialVariants")
+            intent.putExtra("userSelectedMode","trialVariants")
             startActivity(intent)
         }
 

@@ -19,7 +19,7 @@ class TestActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding = DataBindingUtil.setContentView<ActivityTestBinding>(this, R.layout.activity_test)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_test)
         position = intent.getIntExtra("position",1)
 
         inflateExercise()
