@@ -36,8 +36,7 @@ class TrialVariantsActivity : AppCompatActivity() {
             editor.putString("userSelectedMode", "trialVariants")
             editor.apply()
             Log.d(TAG,answers.toString())
-            intent = Intent(this, RecyclerViewActivity::class.java)
-            intent.putExtra("userSelectedMode", "selectTrialVariantExercise")
+            intent = Intent(this, RecyclerViewTrialVariantsActivity::class.java)
             startActivity(intent)
         }
     }
@@ -58,8 +57,7 @@ class TrialVariantsActivity : AppCompatActivity() {
             val editor = sharedPref.edit()
             editor.putString("userSelectedMode", "selectTrialVariantExercise")
             editor.apply()
-            intent = Intent(this, RecyclerViewActivity::class.java)
-            intent.putExtra("userSelectedMode", "selectTrialVariantExercise")
+            intent = Intent(this, RecyclerViewTrialVariantsActivity::class.java)
             startActivity(intent)
             return true
         }

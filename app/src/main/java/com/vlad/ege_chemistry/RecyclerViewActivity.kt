@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.vlad.ege_chemistry.databinding.ActivityRecyclerviewBinding
 
 class RecyclerViewActivity : AppCompatActivity() {
@@ -41,13 +42,8 @@ class RecyclerViewActivity : AppCompatActivity() {
     private fun createRecyclerView() {
         inflateRecyclerViewItems()
 
-        var columnCount = 1
-        if (userSelectedMode == "selectTrialVariantExercise") {
-            columnCount = 4
-        }
-
         val adapter = RecyclerViewAdapter(recyclerViewItems, this)
-        val layoutManager = GridLayoutManager(this, columnCount)
+        val layoutManager = LinearLayoutManager(this)
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = layoutManager
@@ -83,22 +79,13 @@ class RecyclerViewActivity : AppCompatActivity() {
                     recyclerViewItems.add(resources.getString(textResourceId))
                 }
             }
-
-            "selectTrialVariantExercise" -> {
-                for (i in 1..29) {
-                    recyclerViewItems.add(i.toString())
-                }
-                recyclerViewItems.add("Проверка")
-                recyclerViewItems.add("Удалить ответы")
-            }
-
             else -> {
                 Log.e(TAG, "ERROR")
             }
         }
     }
 
-    fun goToActivity(position: Int) {
+   fun goToActivity(position: Int) {
         // Получаем значение userSelectedMode из SharedPreferences
         val sharedPref: SharedPreferences =
             this.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
@@ -116,30 +103,10 @@ class RecyclerViewActivity : AppCompatActivity() {
             }
 
             "trialVariants" -> {
-                intent = Intent(this, RecyclerViewActivity::class.java)
-                intent.putExtra("userSelectedMode", "selectTrialVariantExercise")
-                saveToSharePref("prNumber",(position + 1).toString())
-                clearAnswers()
+                intent = Intent(this, RecyclerViewTrialVariantsActivity::class.java)
+               // saveToSharePref("prNumber",(position + 1).toString())
+                //clearAnswers()
             }
-
-            "selectTrialVariantExercise" -> {
-                when (position) {
-                    29 -> {
-                        checkAnswers()
-                        return
-                    }
-
-                    30 -> {
-                        clearAnswers()
-                        return
-                    }
-
-                    else -> {
-                        intent = Intent(this, TrialVariantsActivity::class.java)
-                    }
-                }
-            }
-
             else -> {
                 Log.e(TAG, "ERROR!")
             }
@@ -161,62 +128,6 @@ class RecyclerViewActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun checkAnswers() {
-        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
-        val string = sharedPref.getString("answers", "").toString()
-        Log.d(TAG, string)
-        var userRawAnswers = string.split("/").drop(1)
-        var userAnswers = ArrayList<String>()
-        for (i in 1..29) {
-            userAnswers.add("")
-        }
-        var number: Int
-        var answer: String
-        for (i in userRawAnswers.indices) {
-            number = userRawAnswers[i].split(":")[0].toInt()
-            answer = userRawAnswers[i].split(":")[1]
-            userAnswers[number - 1] = answer
-        }
-        val textResourceId = resources.getIdentifier("pr1_1_answers", "string", packageName)
-        val correctAnswers = resources.getString(textResourceId).split(":")
-        var quantityOfCorrectAnswers = 0
-        for (i in correctAnswers.indices) {
-            if (correctAnswers[i] == userAnswers[i]) {
-                quantityOfCorrectAnswers++
-            }
-        }
-        Log.d(TAG, quantityOfCorrectAnswers.toString())
-        saveToSharePref("pr1_1_res",quantityOfCorrectAnswers.toString())
-        popup(quantityOfCorrectAnswers)
-    }
-    private fun clearAnswers() {
-        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.remove("answers")
-        editor.apply()
-    }
-    private fun popup(count:Int){
-        // Создание объекта PopupWindow
-        val popupView = layoutInflater.inflate(R.layout.popup_layout, null)
-        val popupWindow = PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-
-// Настройка параметров всплывающего окна
-        popupWindow.isFocusable = true // Разрешить фокус на всплывающем окне
-        popupWindow.isOutsideTouchable = true // Разрешить закрытие всплывающего окна при касании за его пределами
-
-// Отображение всплывающего окна
-        val parentView: View = findViewById(R.id.recyclerView)
-        popupWindow.showAtLocation(parentView, Gravity.CENTER, 0, 0)
-
-        val textview = popupView.findViewById<TextView>(R.id.popupTextView)
-        val button = popupView.findViewById<Button>(R.id.popupButton)
-        val string = "Правильных ответов: $count"
-        textview.text = string
-        button.setOnClickListener {
-            popupWindow.dismiss()
-        }
     }
     private fun saveToSharePref(name:String,text:String){
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
