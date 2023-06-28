@@ -140,17 +140,19 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         val editor = sharedPref.edit()
         editor.remove("answers")
         editor.apply()
+        isAnswersChecked = false
+        createRecyclerView()
     }
     private fun popup(count:Int){
         // Создание объекта PopupWindow
         val popupView = layoutInflater.inflate(R.layout.popup_layout, null)
         val popupWindow = PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
-// Настройка параметров всплывающего окна
+        // Настройка параметров всплывающего окна
         popupWindow.isFocusable = true // Разрешить фокус на всплывающем окне
         popupWindow.isOutsideTouchable = true // Разрешить закрытие всплывающего окна при касании за его пределами
 
-// Отображение всплывающего окна
+        // Отображение всплывающего окна
         val parentView: View = findViewById(R.id.recyclerView)
         popupWindow.showAtLocation(parentView, Gravity.CENTER, 0, 0)
 
