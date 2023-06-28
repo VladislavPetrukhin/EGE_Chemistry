@@ -1,5 +1,6 @@
 package com.vlad.ege_chemistry
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -26,72 +27,42 @@ import com.vlad.ege_chemistry.databinding.ActivityRecyclerviewBinding
 
 class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
 
-    private val recyclerViewItems: ArrayList<String> = ArrayList<String>()
-    lateinit var binding: ActivityRecyclerviewBinding
+    private val recyclerViewItems: ArrayList<String> = ArrayList()
+    private var filledAnswers: ArrayList<String> = ArrayList()
+    private var checkedAnswers: ArrayList<Boolean> = ArrayList()
+    private var isAnswersChecked = false
+    lateinit var binding: ActivityRecyclerViewTrialVariantsBinding
+    private lateinit var adapter:RecyclerViewTrialVariantsAdapter
     private val TAG = "LogRecyclerTrialVariantsViewActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Выберите номер задания"
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_recyclerview)
-        clearAnswers()
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_recycler_view_trial_variants)
         createRecyclerView()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun createRecyclerView() {
         inflateRecyclerViewItems()
-
-        val adapter = RecyclerViewTrialVariantsAdapter(recyclerViewItems, this)
+        filledAnswers = getAnswers()
+        adapter = RecyclerViewTrialVariantsAdapter(recyclerViewItems, this,
+            filledAnswers,isAnswersChecked,checkedAnswers, this)
         val layoutManager = GridLayoutManager(this, 4)
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = layoutManager
+        adapter.notifyDataSetChanged()
     }
-
-    private fun inflateRecyclerViewItems() {
-
-                for (i in 1..29) {
-                    recyclerViewItems.add(i.toString())
-                }
-                recyclerViewItems.add("Проверка")
-                recyclerViewItems.add("Удалить ответы")
-            }
-
-    fun goToActivity(position: Int) {
-                when (position) {
-                    29 -> {
-                        checkAnswers()
-                        return
-                    }
-                    30 -> {
-                        clearAnswers()
-                        return
-                    }
-                    else -> {
-                        intent = Intent(this, TrialVariantsActivity::class.java)
-                    }
-                }
-        intent.putExtra("position", position + 1)
-        startActivity(intent)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-                intent = Intent(this, RecyclerViewActivity::class.java)
-                intent.putExtra("userSelectedMode","trialVariants")
-                startActivity(intent)
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun checkAnswers() {
+    private fun getAnswers():ArrayList<String> {
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val string = sharedPref.getString("answers", "").toString()
         Log.d(TAG, string)
-        var userRawAnswers = string.split("/").drop(1)
-        var userAnswers = ArrayList<String>()
+        val userRawAnswers = string.split("/").drop(1)
+        val userAnswers = ArrayList<String>()
         for (i in 1..29) {
             userAnswers.add("")
         }
@@ -102,17 +73,67 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
             answer = userRawAnswers[i].split(":")[1]
             userAnswers[number - 1] = answer
         }
+        return userAnswers
+    }
+
+    private fun inflateRecyclerViewItems() {
+            recyclerViewItems.clear()
+        for (i in 0 until 29) {
+            recyclerViewItems.add((i + 1).toString())
+        }
+                recyclerViewItems.add("Проверка")
+                recyclerViewItems.add("Удалить ответы")
+            }
+
+    fun goToActivity(position: Int,answerText: String) {
+        val intent: Intent
+        when (position) {
+            29 -> {
+                checkAnswers()
+            }
+            30 -> {
+                clearAnswers()
+            }
+            else -> {
+                intent = Intent(this, TrialVariantsActivity::class.java)
+                intent.putExtra("position", position + 1)
+                intent.putExtra("answerText",answerText)
+                startActivity(intent)
+            }
+        }
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+                intent = Intent(this, RecyclerViewActivity::class.java)
+                intent.putExtra("userSelectedMode","trialVariants")
+                startActivity(intent)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun checkAnswers() {
+        isAnswersChecked = true
+        checkedAnswers.clear()
+        val userAnswers = getAnswers()
         val textResourceId = resources.getIdentifier("pr1_1_answers", "string", packageName)
         val correctAnswers = resources.getString(textResourceId).split(":")
         var quantityOfCorrectAnswers = 0
         for (i in correctAnswers.indices) {
             if (correctAnswers[i] == userAnswers[i]) {
                 quantityOfCorrectAnswers++
+                checkedAnswers.add(true)
+            }
+            else{
+                checkedAnswers.add(false)
             }
         }
         Log.d(TAG, quantityOfCorrectAnswers.toString())
         saveToSharePref("pr1_1_res",quantityOfCorrectAnswers.toString())
         popup(quantityOfCorrectAnswers)
+        createRecyclerView()
     }
     private fun clearAnswers() {
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)

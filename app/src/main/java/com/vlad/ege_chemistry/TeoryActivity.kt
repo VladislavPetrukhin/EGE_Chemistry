@@ -12,6 +12,7 @@ class TeoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Изучите теорию"
 
         val binding = DataBindingUtil.setContentView<ActivityTeoryBinding>(this, R.layout.activity_teory)
 

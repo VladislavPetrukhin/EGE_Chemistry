@@ -3,4 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple">#A925EF</color>
+    <color name="default_recycle_item_color">#FFFFFFFF</color>
+    <color name="positive_recycle_item_color">#1C8105</color>
+    <color name="negative_recycle_item_color">#F65353</color>
+    <color name="neutral_recycle_item_color">#F4E777</color>
 </resources>

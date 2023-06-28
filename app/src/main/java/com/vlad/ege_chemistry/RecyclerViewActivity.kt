@@ -54,6 +54,7 @@ class RecyclerViewActivity : AppCompatActivity() {
         recyclerViewItems.clear()
         when (userSelectedMode) {
             "teory" -> {
+                supportActionBar?.title = "Теория"
                 val count = resources.getInteger(R.integer.teory_count)
                 var textResourceId: Int
                 for (i in 1..count) {
@@ -63,6 +64,7 @@ class RecyclerViewActivity : AppCompatActivity() {
             }
 
             "test" -> {
+                supportActionBar?.title = "Тесты"
                 val count = resources.getInteger(R.integer.test_count)
                 var textResourceId: Int
                 for (i in 1..count) {
@@ -72,6 +74,7 @@ class RecyclerViewActivity : AppCompatActivity() {
             }
 
             "trialVariants" -> {
+                supportActionBar?.title = "Пробные варианты"
                 val count = resources.getInteger(R.integer.trial_variants_count)
                 var textResourceId: Int
                 for (i in 1..count) {

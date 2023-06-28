@@ -19,6 +19,7 @@ class TestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Решите задание"
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_test)
         position = intent.getIntExtra("position",1)
@@ -31,7 +32,7 @@ class TestActivity : AppCompatActivity() {
 
         binding.testAnswerButton.setOnClickListener {
             numberOfQuestion++
-            userAnswers.add(binding.testEditText.text.toString().trim())
+            userAnswers.add(binding.testEditText.editText?.text.toString().trim())
             if (finishedTest) {
 //                var intent = Intent(this,RecyclerViewActivity::class.java)
 //                intent.putExtra("type","test")
@@ -48,7 +49,7 @@ class TestActivity : AppCompatActivity() {
     private fun inflateExercise() {
         val textResourceId = resources.getIdentifier("test${position}_$numberOfQuestion","string",packageName)
         binding.testTextView.text = resources.getString(textResourceId)
-        binding.testEditText.setText("")
+        binding.testEditText.editText?.setText("")
     }
 
     private fun finishTest() {

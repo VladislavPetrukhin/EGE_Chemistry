@@ -17,10 +17,16 @@ class TrialVariantsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Решите задание"
 
         val exercise = intent.getIntExtra("position", 1).toString()
+        val receivedAnswer = intent.getStringExtra("answerText").toString()
+        Log.d(TAG,receivedAnswer)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trial_variants)
+        if (receivedAnswer.isNotEmpty()){
+                binding.testTrialEditText.editText?.setText(receivedAnswer)
+            }
 
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val textSize = sharedPref.getInt("textSize",resources.getInteger(R.integer.mediumTextSize))
@@ -30,7 +36,9 @@ class TrialVariantsActivity : AppCompatActivity() {
 
         binding.testTrialAnswerButton.setOnClickListener {
             var answers = sharedPref.getString("answers", "")
-            answers += "/" + exercise + ":" + binding.testTrialEditText.text.toString().trim()
+            val string = binding.testTrialEditText.editText?.text.toString().trim()
+                .replace("/","").replace(":","")
+            answers += "/$exercise:$string"
             val editor = sharedPref.edit()
             editor.putString("answers", answers)
             editor.putString("userSelectedMode", "trialVariants")
@@ -40,6 +48,11 @@ class TrialVariantsActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    private fun checkContainSymbols(string: String):String {
+            return string.replace("/","").replace(":","")
+    }
+
     private fun inflateExercise(exercise: String) {
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val prNumber = sharedPref.getString("prNumber", "1")
@@ -48,7 +61,7 @@ class TrialVariantsActivity : AppCompatActivity() {
         val textResourceId =
             resources.getIdentifier("pr${prNumber}_$exercise", "string", packageName)
         binding.testTrialTextView.text = resources.getString(textResourceId)
-        binding.testTrialEditText.setText("")
+        binding.testTrialEditText.editText?.setText("")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
