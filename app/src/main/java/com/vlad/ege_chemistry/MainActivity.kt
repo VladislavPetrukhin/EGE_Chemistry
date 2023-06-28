@@ -14,6 +14,7 @@ import com.vlad.ege_chemistry.fragments.MainFragment
 import com.vlad.ege_chemistry.fragments.MotivationFragment
 import com.vlad.ege_chemistry.fragments.RulesFragment
 import com.vlad.ege_chemistry.fragments.SettingsFragment
+import com.vlad.ege_chemistry.fragments.StatisticsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -58,6 +59,10 @@ class MainActivity : AppCompatActivity() {
                     supportActionBar?.title = resources.getString(R.string.fragment_motivation_name)
                 }
                 R.id.nav_item5 -> {
+                    replaceFragment(StatisticsFragment())
+                    supportActionBar?.title = resources.getString(R.string.fragment_statistics_name)
+                }
+                R.id.nav_item6 -> {
                     replaceFragment(SettingsFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_settings_name)
                 }

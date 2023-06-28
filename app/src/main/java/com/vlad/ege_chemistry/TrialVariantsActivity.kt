@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.vlad.ege_chemistry.databinding.ActivityTrialVariantsBinding
 
@@ -22,12 +21,16 @@ class TrialVariantsActivity : AppCompatActivity() {
         val exercise = intent.getIntExtra("position", 1).toString()
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trial_variants)
+
+        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+        val textSize = sharedPref.getInt("textSize",resources.getInteger(R.integer.mediumTextSize))
+        binding.testTrialTextView.textSize = textSize.toFloat()
+
         inflateExercise(exercise)
 
-        binding.testAnswerButton.setOnClickListener {
-            val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+        binding.testTrialAnswerButton.setOnClickListener {
             var answers = sharedPref.getString("answers", "")
-            answers += "/" + exercise + ":" + binding.testEditText.text.toString().trim()
+            answers += "/" + exercise + ":" + binding.testTrialEditText.text.toString().trim()
             val editor = sharedPref.edit()
             editor.putString("answers", answers)
             editor.putString("userSelectedMode", "trialVariants")
@@ -45,8 +48,8 @@ class TrialVariantsActivity : AppCompatActivity() {
         Log.d(TAG, exercise.toString())
         val textResourceId =
             resources.getIdentifier("pr${prNumber}_$exercise", "string", packageName)
-        binding.testTextView.text = resources.getString(textResourceId)
-        binding.testEditText.setText("")
+        binding.testTrialTextView.text = resources.getString(textResourceId)
+        binding.testTrialEditText.setText("")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

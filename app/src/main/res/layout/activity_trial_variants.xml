@@ -12,7 +12,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/testTextView"
+                android:id="@+id/testTrialTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Test"
@@ -22,7 +22,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/testEditText"
+                android:id="@+id/testTrialEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
@@ -34,7 +34,7 @@
                 android:text="" />
 
             <Button
-                android:id="@+id/testAnswerButton"
+                android:id="@+id/testTrialAnswerButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"

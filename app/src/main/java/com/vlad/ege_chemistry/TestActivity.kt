@@ -1,5 +1,6 @@
 package com.vlad.ege_chemistry
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +22,10 @@ class TestActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_test)
         position = intent.getIntExtra("position",1)
+
+        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+        val textSize = sharedPref.getInt("textSize",resources.getInteger(R.integer.mediumTextSize))
+        binding.testTextView.textSize = textSize.toFloat()
 
         inflateExercise()
 
@@ -57,6 +62,10 @@ class TestActivity : AppCompatActivity() {
         }
         if (quantityOfCorrectAnswers == correctAnswers.size){
             binding.testTextView.text = resources.getString(R.string.correct_answers)
+            val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+            editor.putBoolean("test${position}_done", true)
+            editor.apply()
         }else{
             val string =
                 resources.getString(R.string.not_correct_answers) + quantityOfCorrectAnswers +

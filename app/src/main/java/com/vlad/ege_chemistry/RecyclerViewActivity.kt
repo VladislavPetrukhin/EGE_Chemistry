@@ -32,12 +32,7 @@ class RecyclerViewActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_recyclerview)
         userSelectedMode = intent.getStringExtra("userSelectedMode").toString()
-        val sharedPref: SharedPreferences =
-            this.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
-        // Сохраняем значение userSelectedMode в SharedPreferences
-        val editor = sharedPref.edit()
-        editor.putString("userSelectedMode", userSelectedMode)
-        editor.apply()
+        saveToSharePref("userSelectedMode",userSelectedMode)
 
         Log.d(TAG, userSelectedMode)
         createRecyclerView()
@@ -123,9 +118,7 @@ class RecyclerViewActivity : AppCompatActivity() {
             "trialVariants" -> {
                 intent = Intent(this, RecyclerViewActivity::class.java)
                 intent.putExtra("userSelectedMode", "selectTrialVariantExercise")
-                val editor = sharedPref.edit()
-                editor.putString("prNumber", (position + 1).toString())
-                editor.apply()
+                saveToSharePref("prNumber",(position + 1).toString())
                 clearAnswers()
             }
 
@@ -159,11 +152,7 @@ class RecyclerViewActivity : AppCompatActivity() {
         if (item.itemId == android.R.id.home) {
             if (userSelectedMode == "selectTrialVariantExercise") {
                 userSelectedMode = "trialVariants"
-                val sharedPref: SharedPreferences =
-                    this.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
-                val editor = sharedPref.edit()
-                editor.putString("userSelectedMode", userSelectedMode)
-                editor.apply()
+                saveToSharePref("userSelectedMode",userSelectedMode)
                 createRecyclerView()
             } else {
                 intent = Intent(this, MainActivity::class.java)
@@ -199,9 +188,9 @@ class RecyclerViewActivity : AppCompatActivity() {
             }
         }
         Log.d(TAG, quantityOfCorrectAnswers.toString())
+        saveToSharePref("pr1_1_res",quantityOfCorrectAnswers.toString())
         popup(quantityOfCorrectAnswers)
     }
-
     private fun clearAnswers() {
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
@@ -228,7 +217,12 @@ class RecyclerViewActivity : AppCompatActivity() {
         button.setOnClickListener {
             popupWindow.dismiss()
         }
-
+    }
+    private fun saveToSharePref(name:String,text:String){
+        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putString(name, text)
+        editor.apply()
     }
 }
 

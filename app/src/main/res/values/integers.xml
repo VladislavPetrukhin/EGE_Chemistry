@@ -4,4 +4,7 @@
     <integer name="test_count">7</integer>
     <integer name="trial_variants_count">3</integer>
     <integer name="exercisesInTests_count">3</integer>
+    <integer name="smallTextSize">16</integer>
+    <integer name="mediumTextSize">18</integer>
+    <integer name="bigTextSize">20</integer>
 </resources>
