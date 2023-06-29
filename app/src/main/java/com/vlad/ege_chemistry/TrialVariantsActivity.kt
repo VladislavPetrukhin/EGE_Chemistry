@@ -20,17 +20,21 @@ class TrialVariantsActivity : AppCompatActivity() {
         supportActionBar?.title = "Решите задание"
 
         val exercise = intent.getIntExtra("position", 1).toString()
+        Log.d(TAG,exercise)
         val receivedAnswer = intent.getStringExtra("answerText").toString()
         Log.d(TAG,receivedAnswer)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trial_variants)
-        if (receivedAnswer.isNotEmpty()){
-                binding.testTrialEditText.editText?.setText(receivedAnswer)
-            }
+        binding.testTrialEditText.editText?.setText("")
 
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val textSize = sharedPref.getInt("textSize",resources.getInteger(R.integer.mediumTextSize))
         binding.testTrialTextView.textSize = textSize.toFloat()
+
+        if (receivedAnswer.isNotEmpty()){
+                Log.d(TAG,"not empty: $receivedAnswer")
+                binding.testTrialEditText.editText?.setText(receivedAnswer)
+            }
 
         inflateExercise(exercise)
 
@@ -61,7 +65,6 @@ class TrialVariantsActivity : AppCompatActivity() {
         val textResourceId =
             resources.getIdentifier("pr${prNumber}_$exercise", "string", packageName)
         binding.testTrialTextView.text = resources.getString(textResourceId)
-        binding.testTrialEditText.editText?.setText("")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
