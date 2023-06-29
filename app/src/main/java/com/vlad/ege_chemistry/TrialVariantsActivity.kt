@@ -2,11 +2,13 @@ package com.vlad.ege_chemistry
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
+import androidx.preference.PreferenceManager
 import com.vlad.ege_chemistry.databinding.ActivityTrialVariantsBinding
 
 class TrialVariantsActivity : AppCompatActivity() {
@@ -27,9 +29,12 @@ class TrialVariantsActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trial_variants)
         binding.testTrialEditText.editText?.setText("")
 
-        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
-        val textSize = sharedPref.getInt("textSize",resources.getInteger(R.integer.mediumTextSize))
-        binding.testTrialTextView.textSize = textSize.toFloat()
+        val sharedPref: SharedPreferences =
+            this.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+
+        val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val fontSize = defaultSharedPref.getString("pref_key_font_size", "18").toString()
+        binding.testTrialTextView.textSize = fontSize.toFloat()
 
         if (receivedAnswer.isNotEmpty()){
                 Log.d(TAG,"not empty: $receivedAnswer")

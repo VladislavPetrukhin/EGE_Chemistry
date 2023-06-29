@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.preference.PreferenceManager
 import com.vlad.ege_chemistry.databinding.ActivityTestBinding
 
 class TestActivity : AppCompatActivity() {
@@ -24,9 +25,9 @@ class TestActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_test)
         position = intent.getIntExtra("position",1)
 
-        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
-        val textSize = sharedPref.getInt("textSize",resources.getInteger(R.integer.mediumTextSize))
-        binding.testTextView.textSize = textSize.toFloat()
+        val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val fontSize = defaultSharedPref.getString("pref_key_font_size", "18").toString()
+        binding.testTextView.textSize = fontSize.toFloat()
 
         inflateExercise()
 
