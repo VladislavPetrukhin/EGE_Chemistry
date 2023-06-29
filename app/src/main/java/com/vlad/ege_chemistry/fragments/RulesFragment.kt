@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.vlad.ege_chemistry.R
 import com.vlad.ege_chemistry.databinding.FragmentRulesBinding
 
@@ -22,6 +23,9 @@ class RulesFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentRulesBinding>(
             inflater, R.layout.fragment_rules, container, false
         )
+        val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val fontSize = defaultSharedPref.getString("pref_key_font_size", "18").toString()
+        binding.rulesTextView.textSize = fontSize.toFloat()
         return binding.root
     }
 }

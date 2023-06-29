@@ -3,7 +3,6 @@ package com.vlad.ege_chemistry
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -13,17 +12,11 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.vlad.ege_chemistry.databinding.ActivityRecyclerViewTrialVariantsBinding
-import com.vlad.ege_chemistry.databinding.ActivityRecyclerviewBinding
 
 class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
 
@@ -52,9 +45,9 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         adapter = RecyclerViewTrialVariantsAdapter(recyclerViewItems, this,
             filledAnswers,isAnswersChecked,checkedAnswers, this)
         val layoutManager = GridLayoutManager(this, 4)
-
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = layoutManager
+        //val layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewTrialVariants.adapter = adapter
+        binding.recyclerViewTrialVariants.layoutManager = layoutManager
         adapter.notifyDataSetChanged()
     }
     private fun getAnswers():ArrayList<String> {
@@ -153,7 +146,7 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         popupWindow.isOutsideTouchable = true // Разрешить закрытие всплывающего окна при касании за его пределами
 
         // Отображение всплывающего окна
-        val parentView: View = findViewById(R.id.recyclerView)
+        val parentView: View = findViewById(R.id.recyclerViewTrialVariants)
         popupWindow.showAtLocation(parentView, Gravity.CENTER, 0, 0)
 
         val textview = popupView.findViewById<TextView>(R.id.popupTextView)

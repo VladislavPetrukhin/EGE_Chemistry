@@ -1,7 +1,11 @@
 package com.vlad.ege_chemistry
 
+import android.app.Activity
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import android.view.MenuItem
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -24,7 +28,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        val binding =
+            DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
         drawerLayout = binding.drawerLayout
         navView = binding.navigationView
@@ -37,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = resources.getString(R.string.fragment_main_name)
 
     }
-
     private fun setupNavigationDrawer() {
         navView.setNavigationItemSelectedListener { menuItem ->
             // Обработка выбора элемента навигационного меню

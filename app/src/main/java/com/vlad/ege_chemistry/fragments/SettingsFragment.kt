@@ -1,6 +1,7 @@
 package com.vlad.ege_chemistry.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
@@ -10,6 +11,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.vlad.ege_chemistry.MainActivity
 import com.vlad.ege_chemistry.R
 
 class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
@@ -69,6 +71,23 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         if (preferences !is CheckBoxPreference) {
             val value = sharefPreferences?.getString(preferences.key, "").toString()
             setPreferenceLabel(preferences, value)
+//            if(value == "light"){
+//                switchTheme(requireContext(),false)
+//            }else if (value == "dark"){
+//                switchTheme(requireContext(),true)
+//            }
         }
     }
+//    private fun switchTheme(context: Context, isDarkMode: Boolean) {
+//        val themeId = if (isDarkMode) {
+//            R.style.Theme_Dark_EGE_Chemistry
+//        } else {
+//            R.style.Theme_Light_EGE_Chemistry
+//        }
+//
+//        context.setTheme(themeId)
+//        val intent = Intent(context, MainActivity::class.java)
+//        context.startActivity(intent)
+//    }
+
 }

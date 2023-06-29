@@ -2,10 +2,22 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.EGE_Chemistry" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
     </style>
 
     <style name="Theme.EGE_Chemistry" parent="Base.Theme.EGE_Chemistry" />
+<!--        <style name="NavColor">-->
+<!--            <item name="background">@color/white</item>-->
+<!--        </style>-->
+<!--        <style name="RecyclerItemColor">-->
+<!--            <item name="background">@color/white</item>-->
+<!--            <item name="android:textColor">@color/black</item>-->
+<!--        </style>-->
+<!--        <style name="TextViewColor">-->
+<!--            <item name="background">@color/white</item>-->
+<!--            <item name="android:textColor">@color/black</item>-->
+<!--        </style>-->
+<!--    </style>-->
 
     <style name="MainButtonStyle">
         <item name="cornerRadius">25dp</item>
@@ -15,5 +27,16 @@
         <item name="background">@drawable/main_button_style</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="NavColor">
+        <item name="background">@color/white</item>
+    </style>
+    <style name="RecyclerItemColor">
+        <item name="background">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="TextViewColor">
+        <item name="background">@color/white</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 </resources>

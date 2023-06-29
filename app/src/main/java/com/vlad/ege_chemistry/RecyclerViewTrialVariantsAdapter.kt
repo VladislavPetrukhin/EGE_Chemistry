@@ -1,7 +1,10 @@
 package com.vlad.ege_chemistry
 
+import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +24,7 @@ class RecyclerViewTrialVariantsAdapter(
     class ViewHolder(itemView: View, private val recyclerViewActivity: RecyclerViewTrialVariantsActivity,
     private var context: Context,
     private val filledAnswers: ArrayList<String>) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.itemTextView)
+        val textView: TextView = itemView.findViewById(R.id.itemTextViewTrialVariants)
         init {
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -38,7 +41,7 @@ class RecyclerViewTrialVariantsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.recycler_view_item, parent, false)
+                .inflate(R.layout.recycler_view_item_trial_variants, parent, false)
         return ViewHolder(view,recyclerViewActivity,parent.context,filledAnswers)
 
     }
@@ -55,15 +58,28 @@ class RecyclerViewTrialVariantsAdapter(
             } else if(position < 29) {
                 R.color.negative_recycle_item_color
             }else{
-                R.color.default_recycle_item_color
+                if(isDarkTheme(context)){
+                    R.color.default_dark_recycle_item_color
+                }else{
+                    R.color.default_light_recycle_item_color
+                }
             }
         } else {
             if (position < filledAnswers.size && filledAnswers[position].isNotEmpty()) {
                 R.color.neutral_recycle_item_color
             } else {
-                R.color.default_recycle_item_color
+                if(isDarkTheme(context)){
+                    R.color.default_dark_recycle_item_color
+                }else{
+                    R.color.default_light_recycle_item_color
+                }
             }
         }
         holder.itemView.setBackgroundColor(ContextCompat.getColor(context, colorRes))
     }
+    fun isDarkTheme(context: Context): Boolean {
+        return context.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+    }
+
 }
