@@ -13,12 +13,13 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import kotlin.random.Random
 
 class NotificationReceiver : BroadcastReceiver() {
     private val NOTIFICATION_ID = 101
-    private val CHANNEL_ID = "channelID"
-    private val contentTitle = "Дружище, что ты там бездельничаешь? РЕШАЙ ЕГЭ!"
-    private val contentText = "Отдохнули и хватит! Пора дальше прорешивать ЕГЭ!"
+    private val CHANNEL_ID = "channelID1"
+    private var contentTitle:String = ""
+    private var contentText:String = ""
 
     override fun onReceive(context: Context, intent: Intent) {
         createNotificationChannel(context)
@@ -40,6 +41,7 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     private fun showNotification(context: Context) {
+        inflateNotificationContent(context)
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -72,5 +74,15 @@ class NotificationReceiver : BroadcastReceiver() {
             Log.d("MainActivityLog","granted")
             notify(NOTIFICATION_ID, builder.build())
         }
+    }
+    private fun inflateNotificationContent(context: Context){
+        val notificationCount = context.resources.getInteger(R.integer.motivation_notification_count)
+        val number = Random.nextInt(1,notificationCount+1)
+        var textResourceId = context.resources.getIdentifier(
+            "notification_title$number","string",context.packageName)
+        contentTitle = context.resources.getString(textResourceId)
+        textResourceId = context.resources.getIdentifier(
+            "notification_text$number","string",context.packageName)
+        contentText = context.resources.getString(textResourceId)
     }
 }

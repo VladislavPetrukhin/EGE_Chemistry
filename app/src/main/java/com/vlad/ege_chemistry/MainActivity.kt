@@ -40,6 +40,7 @@ import com.vlad.ege_chemistry.fragments.RulesFragment
 import com.vlad.ege_chemistry.fragments.SettingsFragment
 import com.vlad.ege_chemistry.fragments.StatisticsFragment
 import java.util.Calendar
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,8 +48,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navView: NavigationView
     private val NOTIFICATION_ID = 101
     private val CHANNEL_ID = "channelID"
-    private val contentTitle = "Дружище, что ты там бездельничаешь? РЕШАЙ ЕГЭ!"
-    private val contentText = "Отдохнули и хватит! Пора дальше прорешивать ЕГЭ!"
+    private var contentTitle = ""
+    private var contentText = ""
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +76,8 @@ class MainActivity : AppCompatActivity() {
         val notifyOn = defaultSharedPref.getBoolean("pref_key_notifications", true)
         if(notifyOn){
             Log.d("NotifyLog","true")
+            //inflateNotificationContent(applicationContext)
+            //showNotification(applicationContext)
             setupDailyNotification()
         }
 
@@ -104,6 +107,7 @@ class MainActivity : AppCompatActivity() {
         val notificationIntent = Intent(this, NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
+        alarmManager.cancel(pendingIntent)
 
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 18) // Установите желаемое время (час)
@@ -171,21 +175,7 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-    private fun createNotificationChannel(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.channel_name)
-            val descriptionText = context.getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun showNotification(context: Context) {
+        private fun showNotification(context: Context) {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -218,5 +208,15 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivityLog","granted")
             notify(NOTIFICATION_ID, builder.build())
         }
+    }
+    private fun inflateNotificationContent(context: Context){
+        val notificationCount = context.resources.getInteger(R.integer.motivation_notification_count)
+        val number = Random.nextInt(1,notificationCount+1)
+        var textResourceId = context.resources.getIdentifier(
+            "notification_title$number","string",context.packageName)
+        contentTitle = context.resources.getString(textResourceId)
+        textResourceId = context.resources.getIdentifier(
+            "notification_text$number","string",context.packageName)
+        contentText = context.resources.getString(textResourceId)
     }
 }

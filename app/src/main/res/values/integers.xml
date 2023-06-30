@@ -7,4 +7,5 @@
     <integer name="smallTextSize">16</integer>
     <integer name="mediumTextSize">18</integer>
     <integer name="bigTextSize">20</integer>
+    <integer name="motivation_notification_count">5</integer>
 </resources>

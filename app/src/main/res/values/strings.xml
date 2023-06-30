@@ -18,6 +18,17 @@
 
     <string name="motivation_video_url">https://youtu.be/tpiN5VaWvh0</string>
 
+    <string name="notification_title1">Дружище, что ты там бездельничаешь? РЕШАЙ ЕГЭ!</string>
+    <string name="notification_text1">Отдохнули и хватит! Пора дальше прорешивать ЕГЭ!</string>
+    <string name="notification_title2">Бросай всё и бегом решать ЕГЭ!</string>
+    <string name="notification_text2">Ты хочешь сдать ЕГЭ или нет? Если да, то за работу!</string>
+    <string name="notification_title3">Пора за работу!</string>
+    <string name="notification_text3">На сегодня достаточно безделья! Пришло время разорвать бланк ЕГЭ!</string>
+    <string name="notification_title4">Весь день на диване? А как же экзамены?</string>
+    <string name="notification_text4">Пора взяться за голову и сделать хотя бы пару номеров</string>
+    <string name="notification_title5">ХВАТИТ БЕЗДЕЛЬНИЧАТЬ!</string>
+    <string name="notification_text5">Самое время немного порешать ЕГЭ, не так ли?</string>
+
 
     <string name="teory1">Строение электронных оболочек атомов</string>
     <string name="teory2">Закономерности изменения свойств элементов</string>
