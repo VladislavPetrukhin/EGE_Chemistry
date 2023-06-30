@@ -1,11 +1,23 @@
 package com.vlad.ege_chemistry.fragments
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -15,10 +27,13 @@ import com.vlad.ege_chemistry.MainActivity
 import com.vlad.ege_chemistry.R
 
 class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
-
+    private lateinit var permissionLauncher: ActivityResultLauncher<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            Log.d("NotifyLog", "permission: $isGranted")
+        }
     }
 
     override fun onDestroy() {
@@ -76,6 +91,11 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 //            }else if (value == "dark"){
 //                switchTheme(requireContext(),true)
 //            }
+        }else if(preferences.key.toString() == "pref_key_notifications"
+            && preferences.isChecked){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 //    private fun switchTheme(context: Context, isDarkMode: Boolean) {
@@ -89,5 +109,4 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 //        val intent = Intent(context, MainActivity::class.java)
 //        context.startActivity(intent)
 //    }
-
 }

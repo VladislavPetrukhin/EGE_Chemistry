@@ -2,25 +2,22 @@ package com.vlad.ege_chemistry
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlarmManager
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender.SendIntentException
 import android.content.pm.PackageManager
-import android.content.res.Configuration
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
-import android.util.TypedValue
 import android.view.MenuItem
-import android.widget.RemoteViews
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -30,6 +27,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.vlad.ege_chemistry.databinding.ActivityMainBinding
 import com.vlad.ege_chemistry.fragments.HelpFragment
 import com.vlad.ege_chemistry.fragments.MainFragment
@@ -45,11 +47,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navView: NavigationView
     private val NOTIFICATION_ID = 101
     private val CHANNEL_ID = "channelID"
+    private val contentTitle = "Дружище, что ты там бездельничаешь? РЕШАЙ ЕГЭ!"
+    private val contentText = "Отдохнули и хватит! Пора дальше прорешивать ЕГЭ!"
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createNotificationChannel()
+        val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            Log.d("NotifyLog", "permission: $isGranted")
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
@@ -63,47 +74,14 @@ class MainActivity : AppCompatActivity() {
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val notifyOn = defaultSharedPref.getBoolean("pref_key_notifications", true)
         if(notifyOn){
+            Log.d("NotifyLog","true")
             setupDailyNotification()
         }
 
         replaceFragment(MainFragment())
         supportActionBar?.title = resources.getString(R.string.fragment_main_name)
     }
-//    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1
-//
-//    private fun requestNotificationPermission() {
-//        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            Manifest.permission.POST_NOTIFICATIONS
-//        } else {
-//            TODO("VERSION.SDK_INT < TIRAMISU")
-//        }
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-//            // Показать объяснение пользователю, почему нужно разрешение на уведомления
-//            // Например, можно показать диалоговое окно с объяснением
-//
-//            // Ваш код для показа объяснения
-//
-//        } else {
-//            // Запросить разрешение у пользователя
-//            ActivityCompat.requestPermissions(this, arrayOf(permission), NOTIFICATION_PERMISSION_REQUEST_CODE)
-//        }
-//    }
-//
-//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Разрешение на уведомления получено
-//                // Вы можете продолжить отправку уведомлений
-//
-//                // Ваш код для обработки получения разрешения на уведомления
-//
-//            } else {
-//                // Разрешение на уведомления отклонено
-//                // Вы должны адаптировать вашу логику в соответствии с этим
-//            }
-//        }
-//    }
+
 
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -192,5 +170,53 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+    private fun createNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = context.getString(R.string.channel_name)
+            val descriptionText = context.getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun showNotification(context: Context) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.icon_round)
+            .setContentTitle(contentTitle)
+            .setContentText(contentText)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                Log.d("MainActivityLog","not granted")
+                return
+            }
+            Log.d("MainActivityLog","granted")
+            notify(NOTIFICATION_ID, builder.build())
+        }
     }
 }
