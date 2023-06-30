@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">ЕГЭ Химия</string>
+    <string name="channel_name">MotivationNotification</string>
+    <string name="channel_description">Motivation Notification</string>
+
     <string name="main_button_teory">Теория</string>
     <string name="main_button_test">Тесты</string>
     <string name="trial_variants">Пробные варианты</string>
