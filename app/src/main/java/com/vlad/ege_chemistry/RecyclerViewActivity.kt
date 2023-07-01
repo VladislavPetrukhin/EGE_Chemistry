@@ -5,23 +5,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.vlad.ege_chemistry.databinding.ActivityRecyclerviewBinding
 
 class RecyclerViewActivity : AppCompatActivity() {
 
-    private val recyclerViewItems: ArrayList<String> = ArrayList<String>()
+    private val recyclerViewItems: ArrayList<String> = ArrayList()
     lateinit var binding: ActivityRecyclerviewBinding
     private val TAG = "LogRecyclerViewActivity"
     private var userSelectedMode = ""
@@ -43,7 +35,8 @@ class RecyclerViewActivity : AppCompatActivity() {
         inflateRecyclerViewItems()
 
         val adapter = RecyclerViewAdapter(recyclerViewItems, this)
-        val layoutManager = LinearLayoutManager(this)
+        val columnCount = resources.getInteger(R.integer.columnCount)
+        val layoutManager = GridLayoutManager(this,columnCount)
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = layoutManager

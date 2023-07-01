@@ -20,22 +20,22 @@ class MainFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = DataBindingUtil.inflate<FragmentMainBinding>(
             inflater, R.layout.fragment_main, container, false
         )
 
-        binding.buttonTeory.setOnClickListener {
+        binding.buttonTeory?.setOnClickListener {
             val intent = Intent(requireContext(), RecyclerViewActivity::class.java)
             intent.putExtra("userSelectedMode","teory")
             startActivity(intent)
         }
-        binding.buttonTest.setOnClickListener {
+        binding.buttonTest?.setOnClickListener {
             val intent = Intent(requireContext(), RecyclerViewActivity::class.java)
             intent.putExtra("userSelectedMode","test")
             startActivity(intent)
         }
-        binding.buttonTrialVariants.setOnClickListener {
+        binding.buttonTrialVariants?.setOnClickListener {
             val intent = Intent(requireContext(), RecyclerViewActivity::class.java)
             intent.putExtra("userSelectedMode","trialVariants")
             startActivity(intent)

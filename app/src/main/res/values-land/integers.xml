@@ -8,6 +8,6 @@
     <integer name="mediumTextSize">18</integer>
     <integer name="bigTextSize">20</integer>
     <integer name="motivation_notification_count">5</integer>
-    <integer name="columnCount">1</integer>
-    <integer name="columnCountTrialVariantsExercise">4</integer>
+    <integer name="columnCount">2</integer>
+    <integer name="columnCountTrialVariantsExercise">6</integer>
 </resources>

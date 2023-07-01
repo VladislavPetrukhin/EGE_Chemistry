@@ -15,7 +15,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.vlad.ege_chemistry.databinding.ActivityRecyclerViewTrialVariantsBinding
 
 class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
@@ -44,8 +43,8 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         filledAnswers = getAnswers()
         adapter = RecyclerViewTrialVariantsAdapter(recyclerViewItems, this,
             filledAnswers,isAnswersChecked,checkedAnswers, this)
-        val layoutManager = GridLayoutManager(this, 4)
-        //val layoutManager = LinearLayoutManager(this)
+        val columnCount = resources.getInteger(R.integer.columnCountTrialVariantsExercise)
+        val layoutManager = GridLayoutManager(this, columnCount)
         binding.recyclerViewTrialVariants.adapter = adapter
         binding.recyclerViewTrialVariants.layoutManager = layoutManager
         adapter.notifyDataSetChanged()

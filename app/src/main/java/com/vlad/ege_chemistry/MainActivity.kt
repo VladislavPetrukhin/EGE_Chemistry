@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private val CHANNEL_ID = "channelID"
     private var contentTitle = ""
     private var contentText = ""
+    private var fragmnent = "MainFragment"
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,8 +85,36 @@ class MainActivity : AppCompatActivity() {
         replaceFragment(MainFragment())
         supportActionBar?.title = resources.getString(R.string.fragment_main_name)
     }
-
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("fragment", fragmnent) // Сохранение значения
+    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        when(savedInstanceState.getString("fragment")){ // Извлечение значения
+            "MainFragment"->{
+                replaceFragment(MainFragment())
+            }
+            "RulesFragment"->{
+                replaceFragment(RulesFragment())
+            }
+            "HelpFragment"->{
+                replaceFragment(HelpFragment())
+            }
+            "MotivationFragment"->{
+                replaceFragment(MotivationFragment())
+            }
+            "StatisticsFragment"->{
+                replaceFragment(StatisticsFragment())
+            }
+            "SettingsFragment"->{
+                replaceFragment(SettingsFragment())
+            }
+            else->{
+                replaceFragment(MainFragment())
+            }
+        }
+    }
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -114,7 +143,7 @@ class MainActivity : AppCompatActivity() {
         calendar.set(Calendar.MINUTE, 18) // Установите желаемое время (минута)
         calendar.set(Calendar.SECOND, 0) // Установите желаемое время (секунда)
 
-        Log.d("NotifyLog","1")
+        Log.d("NotifyLog","setupDailyNotification")
         // Устанавливаем повторение каждый день
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
@@ -129,26 +158,32 @@ class MainActivity : AppCompatActivity() {
             // Обработка выбора элемента навигационного меню
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
+                    fragmnent = "MainFragment"
                     replaceFragment(MainFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_main_name)
                 }
                 R.id.nav_item2 -> {
+                    fragmnent = "RulesFragment"
                     replaceFragment(RulesFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_rules_name)
                 }
                 R.id.nav_item3 -> {
+                    fragmnent = "HelpFragment"
                     replaceFragment(HelpFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_help_name)
                 }
                 R.id.nav_item4 -> {
+                    fragmnent = "MotivationFragment"
                     replaceFragment(MotivationFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_motivation_name)
                 }
                 R.id.nav_item5 -> {
+                    fragmnent = "StatisticsFragment"
                     replaceFragment(StatisticsFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_statistics_name)
                 }
                 R.id.nav_item6 -> {
+                    fragmnent = "SettingsFragment"
                     replaceFragment(SettingsFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_settings_name)
                 }
