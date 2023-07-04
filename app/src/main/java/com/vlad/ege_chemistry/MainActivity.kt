@@ -84,8 +84,9 @@ class MainActivity : AppCompatActivity() {
                 setupDailyNotification()
             }
         }else{
-            val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            val notifyWereRefused = defaultSharedPref.getBoolean("notifyWereRefused", false)
+            val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+            val notifyWereRefused = sharedPref.getBoolean("notifyWereRefused", false)
+            Log.d("notifyWereRefused",notifyWereRefused.toString())
             if(!notifyWereRefused){
                 showAlertDialog()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -182,7 +183,7 @@ class MainActivity : AppCompatActivity() {
         val notificationIntent = Intent(this, NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
-        alarmManager.cancel(pendingIntent)
+        //alarmManager.cancel(pendingIntent)
 
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 18) // Установите желаемое время (час)
@@ -260,6 +261,13 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+    override fun onBackPressed() {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }else{
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
         private fun showNotification(context: Context) {
         val intent = Intent(context, MainActivity::class.java).apply {

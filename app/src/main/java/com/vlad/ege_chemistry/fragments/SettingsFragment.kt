@@ -88,6 +88,10 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
             sharedPreferences.edit().putBoolean(key, preferences.isChecked).apply()
             if(preferences.isChecked){
+                val sharedPref = requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+                val editor = sharedPref.edit()
+                editor.putBoolean("notifyWereRefused", false)
+                editor.apply()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     notifySetup()
                 }

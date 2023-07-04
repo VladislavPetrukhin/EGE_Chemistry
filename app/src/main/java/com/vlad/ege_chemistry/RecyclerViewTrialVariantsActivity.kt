@@ -162,4 +162,10 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         editor.putString(name, text)
         editor.apply()
     }
+    override fun onBackPressed() {
+        intent = Intent(this, RecyclerViewActivity::class.java)
+        intent.putExtra("userSelectedMode","trialVariants")
+        startActivity(intent)
+    }
+
 }

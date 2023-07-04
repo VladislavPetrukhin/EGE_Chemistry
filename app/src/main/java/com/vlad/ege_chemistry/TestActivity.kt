@@ -74,7 +74,6 @@ class TestActivity : AppCompatActivity() {
                         "/" + resources.getInteger(R.integer.exercisesInTests_count)
             binding.testTextView.text = string
         }
-
         binding.testEditText.visibility = View.GONE
         binding.testAnswerButton.text = "Окей"
         finishedTest = true

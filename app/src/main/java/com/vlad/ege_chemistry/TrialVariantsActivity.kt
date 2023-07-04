@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.preference.PreferenceManager
 import com.vlad.ege_chemistry.databinding.ActivityTrialVariantsBinding
@@ -83,5 +84,13 @@ class TrialVariantsActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+    override fun onBackPressed() {
+        val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putString("userSelectedMode", "selectTrialVariantExercise")
+        editor.apply()
+        intent = Intent(this, RecyclerViewTrialVariantsActivity::class.java)
+        startActivity(intent)
     }
 }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import com.vlad.ege_chemistry.databinding.ActivityRecyclerviewBinding
@@ -124,6 +125,16 @@ class RecyclerViewActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+    override fun onBackPressed() {
+        if (userSelectedMode == "selectTrialVariantExercise") {
+            userSelectedMode = "trialVariants"
+            saveToSharePref("userSelectedMode",userSelectedMode)
+            createRecyclerView()
+        } else {
+            intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
     }
     private fun saveToSharePref(name:String,text:String){
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
