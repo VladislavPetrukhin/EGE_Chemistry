@@ -27,7 +27,7 @@ class RecyclerViewTrialVariantsAdapter(
         val textView: TextView = itemView.findViewById(R.id.itemTextViewTrialVariants)
         init {
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 var text = ""
                 if (position != RecyclerView.NO_POSITION) {
                     if(position < 29){
