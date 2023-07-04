@@ -123,7 +123,7 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
             }
         }
         Log.d(TAG, quantityOfCorrectAnswers.toString())
-        saveToSharePref("pr1_1_res",quantityOfCorrectAnswers.toString())
+        saveToSharePref("pr1_res",quantityOfCorrectAnswers.toString())
         popup(quantityOfCorrectAnswers)
         createRecyclerView()
     }
