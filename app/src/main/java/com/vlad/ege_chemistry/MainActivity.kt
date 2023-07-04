@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
     private var contentText = ""
     private var fragmnent = "MainFragment"
 
-    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createNotificationChannel()
