@@ -2,6 +2,7 @@ package com.vlad.ege_chemistry
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,13 +11,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -55,14 +65,37 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createNotificationChannel()
-        val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            Log.d("NotifyLog", "permission: $isGranted")
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-        }
 
+        if(checkNotificationPermission(applicationContext)){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                    Log.d("NotifyLog", "permission: $isGranted")
+                }
+                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+            createNotificationChannel()
+            val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            val notifyOn = defaultSharedPref.getBoolean("pref_key_notifications", true)
+            Log.d("pref_key_notifications",notifyOn.toString())
+            if(notifyOn){
+                Log.d("NotifyLog","true")
+                //inflateNotificationContent(applicationContext)
+               // showNotification(applicationContext)
+                setupDailyNotification()
+            }
+        }else{
+            val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            val notifyWereRefused = defaultSharedPref.getBoolean("notifyWereRefused", false)
+            if(!notifyWereRefused){
+                showAlertDialog()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                        Log.d("NotifyLog", "permission: $isGranted")
+                    }
+                    permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
@@ -72,15 +105,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_menu_24) // Устанавливаем значок меню
         setupNavigationDrawer()
-
-        val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val notifyOn = defaultSharedPref.getBoolean("pref_key_notifications", true)
-        if(notifyOn){
-            Log.d("NotifyLog","true")
-            //inflateNotificationContent(applicationContext)
-            //showNotification(applicationContext)
-            setupDailyNotification()
-        }
 
         replaceFragment(MainFragment())
         supportActionBar?.title = resources.getString(R.string.fragment_main_name)
@@ -118,6 +142,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun checkNotificationPermission(context: Context): Boolean {
+        // Проверяем, разрешено ли отправлять уведомления
+        return NotificationManagerCompat.from(context).areNotificationsEnabled()
+    }
+
+    private fun requestNotificationPermission(activity: Activity, requestCode: Int) {
+        // Запрашиваем разрешение на отправку уведомлений
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
+            activity.startActivityForResult(intent, requestCode)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            val uri = Uri.fromParts("package", activity.packageName, null)
+            intent.data = uri
+            activity.startActivityForResult(intent, requestCode)
+        }
+    }
+
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -252,14 +295,27 @@ class MainActivity : AppCompatActivity() {
             notify(NOTIFICATION_ID, builder.build())
         }
     }
-    private fun inflateNotificationContent(context: Context){
-        val notificationCount = context.resources.getInteger(R.integer.motivation_notification_count)
-        val number = Random.nextInt(1,notificationCount+1)
-        var textResourceId = context.resources.getIdentifier(
-            "notification_title$number","string",context.packageName)
-        contentTitle = context.resources.getString(textResourceId)
-        textResourceId = context.resources.getIdentifier(
-            "notification_text$number","string",context.packageName)
-        contentText = context.resources.getString(textResourceId)
+    private fun showAlertDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Уведомления")
+            .setMessage("Разрешите уведомления для приложения")
+            .setPositiveButton("Разрешить") { dialog, _ ->
+                dialog.dismiss()
+                requestNotificationPermission(this,103)
+            }
+            .setNegativeButton("Не сейчас") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setNeutralButton("Нет, больше не спрашивать") { dialog, _ ->
+                val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+                val editor = sharedPref.edit()
+                editor.putBoolean("notifyWereRefused",true)
+                editor.apply()
+                dialog.dismiss()
+            }
+            .setCancelable(false) // Запретить закрытие окна при нажатии вне его пределов
+
+        val dialog = builder.create()
+        dialog.show()
     }
 }

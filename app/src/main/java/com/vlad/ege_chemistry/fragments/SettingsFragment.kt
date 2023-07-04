@@ -1,29 +1,22 @@
 package com.vlad.ege_chemistry.fragments
 
-import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.vlad.ege_chemistry.MainActivity
 import com.vlad.ege_chemistry.R
 
 class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
@@ -91,11 +84,14 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 //            }else if (value == "dark"){
 //                switchTheme(requireContext(),true)
 //            }
-        }else if(preferences.key.toString() == "pref_key_notifications"
-            && preferences.isChecked){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            }
+        }else if(preferences.key.toString() == "pref_key_notifications"){
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            sharedPreferences.edit().putBoolean(key, preferences.isChecked).apply()
+            if(preferences.isChecked){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    notifySetup()
+                }
+        }
         }
     }
 //    private fun switchTheme(context: Context, isDarkMode: Boolean) {
@@ -109,4 +105,31 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 //        val intent = Intent(context, MainActivity::class.java)
 //        context.startActivity(intent)
 //    }
+    private fun notifySetup(){
+    if(checkNotificationPermission(requireContext())){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }else{
+        requestNotificationPermission(this,123)
+    }
+}
+    private fun checkNotificationPermission(context: Context): Boolean {
+        // Проверяем, разрешено ли отправлять уведомления
+        return NotificationManagerCompat.from(context).areNotificationsEnabled()
+    }
+
+    private fun requestNotificationPermission(activity: SettingsFragment, requestCode: Int) {
+        // Запрашиваем разрешение на отправку уведомлений
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, "com.vlad.ege_chemistry")
+            activity.startActivityForResult(intent, requestCode)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            val uri = Uri.fromParts("package", "com.vlad.ege_chemistry", null)
+            intent.data = uri
+            activity.startActivityForResult(intent, requestCode)
+        }
+    }
 }
