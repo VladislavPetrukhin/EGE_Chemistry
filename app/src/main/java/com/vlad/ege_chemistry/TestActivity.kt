@@ -26,7 +26,7 @@ class TestActivity : AppCompatActivity() {
         position = intent.getIntExtra("position",1)
 
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val fontSize = defaultSharedPref.getString("pref_key_font_size", "18").toString()
+        val fontSize = defaultSharedPref.getString("pref_key_font_size", resources.getInteger(R.integer.mediumTextSize).toString()).toString()
         binding.testTextView.textSize = fontSize.toFloat()
 
         inflateExercise()

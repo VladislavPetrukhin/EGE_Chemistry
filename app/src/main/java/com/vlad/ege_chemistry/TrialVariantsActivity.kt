@@ -33,7 +33,7 @@ class TrialVariantsActivity : AppCompatActivity() {
             this.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
 
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val fontSize = defaultSharedPref.getString("pref_key_font_size", "18").toString()
+        val fontSize = defaultSharedPref.getString("pref_key_font_size",resources.getInteger(R.integer.mediumTextSize).toString()).toString()
         binding.testTrialTextView.textSize = fontSize.toFloat()
 
         if (receivedAnswer.isNotEmpty()){

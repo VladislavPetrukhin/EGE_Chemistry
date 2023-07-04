@@ -18,7 +18,7 @@ class TeoryActivity : AppCompatActivity() {
         val binding = DataBindingUtil.setContentView<ActivityTeoryBinding>(this, R.layout.activity_teory)
 
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val fontSize = defaultSharedPref.getString("pref_key_font_size", "18").toString()
+        val fontSize = defaultSharedPref.getString("pref_key_font_size", resources.getInteger(R.integer.mediumTextSize).toString()).toString()
         binding.teoryTextView.textSize = fontSize.toFloat()
 
         var position = intent.getIntExtra("position",1).toString()

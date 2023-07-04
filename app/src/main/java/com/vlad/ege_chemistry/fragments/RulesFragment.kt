@@ -24,7 +24,7 @@ class RulesFragment : Fragment() {
             inflater, R.layout.fragment_rules, container, false
         )
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val fontSize = defaultSharedPref.getString("pref_key_font_size", "18").toString()
+        val fontSize = defaultSharedPref.getString("pref_key_font_size", resources.getInteger(R.integer.mediumTextSize).toString()).toString()
         binding.rulesTextView.textSize = fontSize.toFloat()
         return binding.root
     }
