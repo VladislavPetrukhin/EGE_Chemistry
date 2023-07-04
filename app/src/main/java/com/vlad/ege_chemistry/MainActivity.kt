@@ -33,6 +33,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.vlad.ege_chemistry.databinding.ActivityMainBinding
+import com.vlad.ege_chemistry.fragments.FeedbackFragment
 import com.vlad.ege_chemistry.fragments.HelpFragment
 import com.vlad.ege_chemistry.fragments.MainFragment
 import com.vlad.ege_chemistry.fragments.MotivationFragment
@@ -110,6 +111,9 @@ class MainActivity : AppCompatActivity() {
             "SettingsFragment"->{
                 replaceFragment(SettingsFragment())
             }
+            "FeedbackFragment"->{
+                replaceFragment(FeedbackFragment())
+            }
             else->{
                 replaceFragment(MainFragment())
             }
@@ -186,6 +190,11 @@ class MainActivity : AppCompatActivity() {
                     fragmnent = "SettingsFragment"
                     replaceFragment(SettingsFragment())
                     supportActionBar?.title = resources.getString(R.string.fragment_settings_name)
+                }
+                R.id.nav_item7 -> {
+                    fragmnent = "FeedbackFragment"
+                    replaceFragment(FeedbackFragment())
+                    supportActionBar?.title = resources.getString(R.string.fragment_feedback_name)
                 }
             }
             // Закрываем Navigation Drawer после выбора элемента
