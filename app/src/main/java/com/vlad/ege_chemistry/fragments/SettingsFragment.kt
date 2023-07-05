@@ -1,5 +1,6 @@
 package com.vlad.ege_chemistry.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,6 +12,8 @@ import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat.recreate
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
@@ -46,10 +49,8 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
 
-        val sharedPref = requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val notifications = defaultSharedPref.getBoolean("pref_key_notifications", true)
-        val theme = defaultSharedPref.getString("pref_key_theme", "light")
+
 
         val preferenceScreen = preferenceScreen
 
@@ -57,12 +58,12 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             Log.d("PrefLog", i.toString())
             val preferences = preferenceScreen.getPreference(i)
             if (preferences !is CheckBoxPreference) {
-                val value = sharedPref.getString(preferences.key, "").toString()
+                val value = defaultSharedPref.getString(preferences.key, "").toString()
                 setPreferenceLabel(preferences, value)
             }
         }
-       // onSharedPreferenceChanged(preferenceScreen.sharedPreferences,"pref_key_theme")
-      //  onSharedPreferenceChanged(preferenceScreen.sharedPreferences,"fontSize")
+        onSharedPreferenceChanged(preferenceScreen.sharedPreferences,"pref_key_theme")
+        onSharedPreferenceChanged(preferenceScreen.sharedPreferences,"pref_key_font_size")
     }
 
     private fun setPreferenceLabel(preferences: Preference, value: String) {
@@ -79,43 +80,50 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         if (preferences !is CheckBoxPreference) {
             val value = sharefPreferences?.getString(preferences.key, "").toString()
             setPreferenceLabel(preferences, value)
-//            if(value == "light"){
-//                switchTheme(requireContext(),false)
-//            }else if (value == "dark"){
-//                switchTheme(requireContext(),true)
-//            }
-        }else if(preferences.key.toString() == "pref_key_notifications"){
+            if (preferences.key.toString() == "pref_key_theme") {
+                when (value) {
+                    "system" -> {
+                        // Установка системной темы
+                        Log.d("Theme", "Theme: system")
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    }
+
+                    "light" -> {
+                        // Установка светлой темы
+                        Log.d("Theme", "Theme: light")
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+
+                    "dark" -> {
+                        // Установка темной темы
+                        Log.d("Theme", "Theme: dark")
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+                //recreate(requireActivity())
+            }
+        } else if (preferences.key.toString() == "pref_key_notifications") {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
             sharedPreferences.edit().putBoolean(key, preferences.isChecked).apply()
-            if(preferences.isChecked){
-                val sharedPref = requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+            if (preferences.isChecked) {
+                val sharedPref =
+                    requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
                 editor.putBoolean("notifyWereRefused", false)
                 editor.apply()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     notifySetup()
                 }
-        }
+            }
         }
     }
-//    private fun switchTheme(context: Context, isDarkMode: Boolean) {
-//        val themeId = if (isDarkMode) {
-//            R.style.Theme_Dark_EGE_Chemistry
-//        } else {
-//            R.style.Theme_Light_EGE_Chemistry
-//        }
-//
-//        context.setTheme(themeId)
-//        val intent = Intent(context, MainActivity::class.java)
-//        context.startActivity(intent)
-//    }
     private fun notifySetup(){
     if(checkNotificationPermission(requireContext())){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
     }else{
-        requestNotificationPermission(this,123)
+        requestNotificationPermission(requireActivity(),123)
     }
 }
     private fun checkNotificationPermission(context: Context): Boolean {
@@ -123,7 +131,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         return NotificationManagerCompat.from(context).areNotificationsEnabled()
     }
 
-    private fun requestNotificationPermission(activity: SettingsFragment, requestCode: Int) {
+    private fun requestNotificationPermission(activity: Activity, requestCode: Int) {
         // Запрашиваем разрешение на отправку уведомлений
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)

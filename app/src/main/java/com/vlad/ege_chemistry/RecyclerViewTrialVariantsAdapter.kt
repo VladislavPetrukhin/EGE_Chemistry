@@ -1,10 +1,8 @@
 package com.vlad.ege_chemistry
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

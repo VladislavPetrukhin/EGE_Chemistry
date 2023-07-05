@@ -1,7 +1,6 @@
 package com.vlad.ege_chemistry
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.NotificationChannel
@@ -9,25 +8,17 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender.SendIntentException
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -37,11 +28,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.vlad.ege_chemistry.databinding.ActivityMainBinding
 import com.vlad.ege_chemistry.fragments.FeedbackFragment
 import com.vlad.ege_chemistry.fragments.HelpFragment
@@ -51,7 +37,6 @@ import com.vlad.ege_chemistry.fragments.RulesFragment
 import com.vlad.ege_chemistry.fragments.SettingsFragment
 import com.vlad.ege_chemistry.fragments.StatisticsFragment
 import java.util.Calendar
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -62,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private var contentTitle = ""
     private var contentText = ""
     private var fragmnent = "MainFragment"
+    private val TAG = "MainActivityLog"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,14 +55,14 @@ class MainActivity : AppCompatActivity() {
         if(checkNotificationPermission(applicationContext)){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-                    Log.d("NotifyLog", "permission: $isGranted")
+                    Log.d(TAG, "permission: $isGranted")
                 }
                 permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
             createNotificationChannel()
             val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             val notifyOn = defaultSharedPref.getBoolean("pref_key_notifications", true)
-            Log.d("pref_key_notifications",notifyOn.toString())
+            Log.d(TAG, "pref_key_notifications $notifyOn")
             if(notifyOn){
                 Log.d("NotifyLog","true")
                 //inflateNotificationContent(applicationContext)
@@ -86,12 +72,12 @@ class MainActivity : AppCompatActivity() {
         }else{
             val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
             val notifyWereRefused = sharedPref.getBoolean("notifyWereRefused", false)
-            Log.d("notifyWereRefused",notifyWereRefused.toString())
+            Log.d(TAG, "notifyWereRefused $notifyWereRefused")
             if(!notifyWereRefused){
                 showAlertDialog()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-                        Log.d("NotifyLog", "permission: $isGranted")
+                        Log.d(TAG, "permission: $isGranted")
                     }
                     permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
@@ -99,6 +85,26 @@ class MainActivity : AppCompatActivity() {
         }
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        when (sharedPreferences.getString("pref_key_theme", "system")) {
+            "system" -> {
+                // Установка системной темы
+                Log.d(TAG,"Theme: system")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+            "light" -> {
+                // Установка светлой темы
+                Log.d(TAG,"Theme: light")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            "dark" -> {
+                // Установка темной темы
+                Log.d(TAG,"Theme: dark")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+        }
 
         drawerLayout = binding.drawerLayout
         navView = binding.navigationView
@@ -163,8 +169,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+        // Create the NotificationChannel, but only on API 26+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.channel_name)
             val descriptionText = getString(R.string.channel_description)
