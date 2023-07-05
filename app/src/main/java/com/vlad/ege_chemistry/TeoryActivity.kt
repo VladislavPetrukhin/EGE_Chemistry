@@ -19,11 +19,11 @@ class TeoryActivity : AppCompatActivity() {
 
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val fontSize = defaultSharedPref.getString("pref_key_font_size", resources.getInteger(R.integer.mediumTextSize).toString()).toString()
-        binding.teoryTextView.textSize = fontSize.toFloat()
+        binding.teoryTextView.textSize = fontSize.toFloat()  //меняем размер шрифта
 
         var position = intent.getIntExtra("position",1).toString()
         var textResourceId = resources.getIdentifier("text$position","string",packageName)
-        binding.teoryTextView.text = resources.getString(textResourceId)
+        binding.teoryTextView.text = resources.getString(textResourceId)  //выбираем текст в зависимости от позиции на которую нажали в recyclerview
 
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -20,9 +20,9 @@ import com.vlad.ege_chemistry.databinding.ActivityRecyclerViewTrialVariantsBindi
 class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
 
     private val recyclerViewItems: ArrayList<String> = ArrayList()
-    private var filledAnswers: ArrayList<String> = ArrayList()
-    private var checkedAnswers: ArrayList<Boolean> = ArrayList()
-    private var isAnswersChecked = false
+    private var filledAnswers: ArrayList<String> = ArrayList()  //введенные и сохраненнные ответы пользователя
+    private var checkedAnswers: ArrayList<Boolean> = ArrayList() //здесь содержится информация правильно или нет пользователь решил номер
+    private var isAnswersChecked = false  //проверка ответов выполнена или еще нет
     lateinit var binding: ActivityRecyclerViewTrialVariantsBinding
     private lateinit var adapter:RecyclerViewTrialVariantsAdapter
     private val TAG = "LogRecyclerTrialVariantsViewActivity"
@@ -51,16 +51,16 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
     }
     private fun getAnswers():ArrayList<String> {
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
-        val string = sharedPref.getString("answers", "").toString()
+        val string = sharedPref.getString("answers", "").toString()  //получаем из sharedPref строку в которой сохранены ответы пользователя
         Log.d(TAG, string)
-        val userRawAnswers = string.split("/").drop(1)
-        val userAnswers = ArrayList<String>()
-        for (i in 1..29) {
+        val userRawAnswers = string.split("/").drop(1)  //разделяем их. / это символ используемый в качестве разделителя номеров
+        val userAnswers = ArrayList<String>()  //userRawAnswers - это все ответы пользователя. они идут вперемешку. userAnswers - это отсортированные по порядку
+        for (i in 1..resources.getInteger(R.integer.exercisesInTrialVariants_count)) {  //заполняем ответы пользователя пустыми строками
             userAnswers.add("")
         }
         var number: Int
         var answer: String
-        for (i in userRawAnswers.indices) {
+        for (i in userRawAnswers.indices) {  //сортируем ответы по по порядку. : это символ используемый в качестве разлелителя в номере между номеров задания и ответом на него
             number = userRawAnswers[i].split(":")[0].toInt()
             answer = userRawAnswers[i].split(":")[1]
             userAnswers[number - 1] = answer
@@ -70,21 +70,21 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
 
     private fun inflateRecyclerViewItems() {
             recyclerViewItems.clear()
-        for (i in 0 until 29) {
+        for (i in 0 until resources.getInteger(R.integer.exercisesInTrialVariants_count)) {
             recyclerViewItems.add((i + 1).toString())
         }
                 recyclerViewItems.add("Проверка")
                 recyclerViewItems.add("Удалить ответы")
             }
 
-    fun goToActivity(position: Int,answerText: String) {
+    fun goToActivity(position: Int,answerText: String) {  //обработка нажатия на recycleritem. если нажали на номер, то открывается номер и переадается ответ, который мог быть сохранен ранее
         val intent: Intent
         when (position) {
-            29 -> {
-                checkAnswers()
+            resources.getInteger(R.integer.exercisesInTrialVariants_count) -> {
+                checkAnswers() //проверка ответов
             }
-            30 -> {
-                clearAnswers()
+            resources.getInteger(R.integer.exercisesInTrialVariants_count)+1 -> {
+                clearAnswers()  //очистка ответов
             }
             else -> {
                 intent = Intent(this, TrialVariantsActivity::class.java)
@@ -109,12 +109,12 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
     private fun checkAnswers() {
         isAnswersChecked = true
         checkedAnswers.clear()
-        val userAnswers = getAnswers()
-        val textResourceId = resources.getIdentifier("pr1_1_answers", "string", packageName)
-        val correctAnswers = resources.getString(textResourceId).split(":")
+        val userAnswers = getAnswers()  //получаем отсоритрованные ответы пользователя
+        val textResourceId = resources.getIdentifier("pr1_1_answers", "string", packageName) //получаем строку с правильными ответами пользователя
+        val correctAnswers = resources.getString(textResourceId).split(":") //делим ее на list
         var quantityOfCorrectAnswers = 0
         for (i in correctAnswers.indices) {
-            if (correctAnswers[i] == userAnswers[i]) {
+            if (correctAnswers[i] == userAnswers[i]) {  //если ответы совпали, то правильно
                 quantityOfCorrectAnswers++
                 checkedAnswers.add(true)
             }
@@ -124,8 +124,8 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         }
         Log.d(TAG, quantityOfCorrectAnswers.toString())
         saveToSharePref("pr1_res",quantityOfCorrectAnswers.toString())
-        popup(quantityOfCorrectAnswers)
-        createRecyclerView()
+        popup(quantityOfCorrectAnswers)  //всплывающее окно где скасзано сколько правильно
+        createRecyclerView() //обновить recyclerview чтобы перекрасились элементы
     }
     private fun clearAnswers() {
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)

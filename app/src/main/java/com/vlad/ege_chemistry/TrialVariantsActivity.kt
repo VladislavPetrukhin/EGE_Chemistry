@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.preference.PreferenceManager
 import com.vlad.ege_chemistry.databinding.ActivityTrialVariantsBinding
@@ -24,7 +23,7 @@ class TrialVariantsActivity : AppCompatActivity() {
 
         val exercise = intent.getIntExtra("position", 1).toString()
         Log.d(TAG,exercise)
-        val receivedAnswer = intent.getStringExtra("answerText").toString()
+        val receivedAnswer = intent.getStringExtra("answerText").toString() //получаем сохраненный ранее ответ
         Log.d(TAG,receivedAnswer)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_trial_variants)
@@ -47,22 +46,17 @@ class TrialVariantsActivity : AppCompatActivity() {
         binding.testTrialAnswerButton.setOnClickListener {
             var answers = sharedPref.getString("answers", "")
             val string = binding.testTrialEditText.editText?.text.toString().trim()
-                .replace("/","").replace(":","")
-            answers += "/$exercise:$string"
+                .replace("/","").replace(":","")   //удаляем из ответа / и : если пользователь их ввел. потому что это разделители в ответах
+            answers += "/$exercise:$string" //сохраняем ответ.  / разделяет номера, : раздляет в номере ответ и номер задания
             val editor = sharedPref.edit()
             editor.putString("answers", answers)
             editor.putString("userSelectedMode", "trialVariants")
             editor.apply()
             Log.d(TAG,answers.toString())
-            intent = Intent(this, RecyclerViewTrialVariantsActivity::class.java)
+            intent = Intent(this, RecyclerViewTrialVariantsActivity::class.java) //выхожим обратно
             startActivity(intent)
         }
     }
-
-    private fun checkContainSymbols(string: String):String {
-            return string.replace("/","").replace(":","")
-    }
-
     private fun inflateExercise(exercise: String) {
         val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val prNumber = sharedPref.getString("prNumber", "1")

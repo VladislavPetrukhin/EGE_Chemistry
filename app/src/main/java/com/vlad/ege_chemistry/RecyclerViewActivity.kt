@@ -45,7 +45,7 @@ class RecyclerViewActivity : AppCompatActivity() {
     private fun inflateRecyclerViewItems() {
         Log.d(TAG, userSelectedMode)
         recyclerViewItems.clear()
-        when (userSelectedMode) {
+        when (userSelectedMode) {  //заполняем recyclerViewItems в зависимости от выбранного раздела пользователем
             "teory" -> {
                 supportActionBar?.title = "Теория"
                 val count = resources.getInteger(R.integer.teory_count)
@@ -81,8 +81,7 @@ class RecyclerViewActivity : AppCompatActivity() {
         }
     }
 
-   fun goToActivity(position: Int) {
-        // Получаем значение userSelectedMode из SharedPreferences
+   fun goToActivity(position: Int) {  //переходим в нужное активити в зависимости от выбора пользователя, передаем позицию выбранного номера в recyclerciew
         val sharedPref: SharedPreferences =
             this.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val userSelectedMode = sharedPref.getString("userSelectedMode", "").toString()

@@ -39,7 +39,7 @@ class TestActivity : AppCompatActivity() {
 //                intent.putExtra("type","test")
 //                startActivity(intent)
                 finish()
-            } else if (numberOfQuestion > resources.getInteger(R.integer.exercisesInTests_count)) {
+            } else if (numberOfQuestion > resources.getInteger(R.integer.exercisesInTests_count)) {  //если еще не все номера в тесте сделали, продолжаем, заполяя поля новым заданием
                     finishTest()
                 } else {
                     inflateExercise()
@@ -47,13 +47,13 @@ class TestActivity : AppCompatActivity() {
         }
     }
 
-    private fun inflateExercise() {
+    private fun inflateExercise() { //выбираем текст в зависимости от позиции на которую нажали в recyclerview
         val textResourceId = resources.getIdentifier("test${position}_$numberOfQuestion","string",packageName)
         binding.testTextView.text = resources.getString(textResourceId)
         binding.testEditText.editText?.setText("")
     }
 
-    private fun finishTest() {
+    private fun finishTest() { //заканчиваем тест и проверяем ответы
         val textResourceId = resources.getIdentifier("testAnswer$position","string",packageName)
         val correctAnswers = resources.getString(textResourceId).split(":")
         var quantityOfCorrectAnswers = 0

@@ -4,10 +4,10 @@
     <integer name="test_count">28</integer>
     <integer name="trial_variants_count">3</integer>
     <integer name="exercisesInTests_count">3</integer>
+    <integer name="exercisesInTrialVariants_count">29</integer>
     <integer name="motivation_notification_count">5</integer>
     <integer name="columnCount">3</integer>
     <integer name="columnCountTrialVariantsExercise">8</integer>
-    <dimen name="fab_margin">48dp</dimen>
     <integer name="smallTextSize">24</integer>
     <integer name="mediumTextSize">28</integer>
     <integer name="bigTextSize">32</integer>

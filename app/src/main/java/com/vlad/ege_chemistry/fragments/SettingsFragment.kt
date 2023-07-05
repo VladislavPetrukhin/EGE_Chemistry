@@ -50,11 +50,9 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         addPreferencesFromResource(R.xml.preferences)
 
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
-
         val preferenceScreen = preferenceScreen
 
-        for (i in 0 until preferenceScreen.preferenceCount) {
+        for (i in 0 until preferenceScreen.preferenceCount) {   //проходим по всем pref, чтобы выставить выбранное значение
             Log.d("PrefLog", i.toString())
             val preferences = preferenceScreen.getPreference(i)
             if (preferences !is CheckBoxPreference) {
@@ -66,7 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         onSharedPreferenceChanged(preferenceScreen.sharedPreferences,"pref_key_font_size")
     }
 
-    private fun setPreferenceLabel(preferences: Preference, value: String) {
+    private fun setPreferenceLabel(preferences: Preference, value: String) {  //выставляет summary в pref
         if (preferences is ListPreference) {
             val index = preferences.findIndexOfValue(value)
             if (index >= 0) {
@@ -80,7 +78,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         if (preferences !is CheckBoxPreference) {
             val value = sharefPreferences?.getString(preferences.key, "").toString()
             setPreferenceLabel(preferences, value)
-            if (preferences.key.toString() == "pref_key_theme") {
+            if (preferences.key.toString() == "pref_key_theme") {   //если была изменена тема в pref - меняем тему приложения
                 when (value) {
                     "system" -> {
                         // Установка системной темы
@@ -102,7 +100,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                 }
                 //recreate(requireActivity())
             }
-        } else if (preferences.key.toString() == "pref_key_notifications") {
+        } else if (preferences.key.toString() == "pref_key_notifications") {  //подключаем уведомления, если были включены в pref
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
             sharedPreferences.edit().putBoolean(key, preferences.isChecked).apply()
             if (preferences.isChecked) {

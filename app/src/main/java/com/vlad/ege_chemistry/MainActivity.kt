@@ -52,18 +52,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if(checkNotificationPermission(applicationContext)){
+        if(checkNotificationPermission(applicationContext)){  //подключаем уведомления
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
                     Log.d(TAG, "permission: $isGranted")
                 }
-                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
             createNotificationChannel()
             val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             val notifyOn = defaultSharedPref.getBoolean("pref_key_notifications", true)
             Log.d(TAG, "pref_key_notifications $notifyOn")
-            if(notifyOn){
+            if(notifyOn){   //если в pref включены уведы ,то тогда включаем ежедневные уведы
                 Log.d("NotifyLog","true")
                 //inflateNotificationContent(applicationContext)
                // showNotification(applicationContext)
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
             val notifyWereRefused = sharedPref.getBoolean("notifyWereRefused", false)
             Log.d(TAG, "notifyWereRefused $notifyWereRefused")
-            if(!notifyWereRefused){
+            if(!notifyWereRefused){  //если пользователь не выбирал в диалоге про уведомления "больше не показывать", тогда спрашиваем разрешение на уведомления
                 showAlertDialog()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-        when (sharedPreferences.getString("pref_key_theme", "system")) {
+        when (sharedPreferences.getString("pref_key_theme", "system")) {  //устанавлиаем тему приложения
             "system" -> {
                 // Установка системной темы
                 Log.d(TAG,"Theme: system")
@@ -113,16 +113,16 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_menu_24) // Устанавливаем значок меню
         setupNavigationDrawer()
 
-        replaceFragment(MainFragment())
+        replaceFragment(MainFragment())  //фрагмент который открывается первым
         supportActionBar?.title = resources.getString(R.string.fragment_main_name)
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("fragment", fragmnent) // Сохранение значения
+        outState.putString("fragment", fragmnent) // Сохранение значения в state
     }
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        when(savedInstanceState.getString("fragment")){ // Извлечение значения
+        when(savedInstanceState.getString("fragment")){ // Извлечение значения из state
             "MainFragment"->{
                 replaceFragment(MainFragment())
             }
@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-    private fun setupDailyNotification() {
+    private fun setupDailyNotification() {  //включает ежедневные уведомления
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val notificationIntent = Intent(this, NotificationReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
@@ -274,7 +274,7 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
     }
-        private fun showNotification(context: Context) {
+        private fun showNotification(context: Context) {  //выводит уведомление
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -308,18 +308,18 @@ class MainActivity : AppCompatActivity() {
             notify(NOTIFICATION_ID, builder.build())
         }
     }
-    private fun showAlertDialog() {
+    private fun showAlertDialog() {  //показывает диалог который просит включить уведомления в настройках приложений
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Уведомления")
             .setMessage("Разрешите уведомления для приложения")
-            .setPositiveButton("Разрешить") { dialog, _ ->
+            .setPositiveButton("Разрешить") { dialog, _ ->  //если разрешил - открыает настройки уведомлений приложения
                 dialog.dismiss()
                 requestNotificationPermission(this,103)
             }
-            .setNegativeButton("Не сейчас") { dialog, _ ->
+            .setNegativeButton("Не сейчас") { dialog, _ ->  //если не сейчас закрываем диалог, потом спросим еще раз
                 dialog.dismiss()
             }
-            .setNeutralButton("Нет, больше не спрашивать") { dialog, _ ->
+            .setNeutralButton("Нет, больше не спрашивать") { dialog, _ ->  //закрываем диалог и больше не спрашиваем
                 val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
                 editor.putBoolean("notifyWereRefused",true)

@@ -25,7 +25,7 @@ class FeedbackFragment : Fragment() {
         binding.buttonFeedBack.setOnClickListener { writeEmail() }
         return binding.root
     }
-    private fun writeEmail(){
+    private fun writeEmail(){  //отправляем письмо на почту
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "message/rfc822"
         intent.putExtra(Intent.EXTRA_EMAIL,

@@ -30,24 +30,24 @@ class StatisticsFragment : Fragment() {
         checkTestsRes()
         checkTrialVariantsRes()
         binding.deleteResults.setOnClickListener {
-            deleteResults()
-            checkTestsRes()
+            deleteResults()  //удаляем статистику
+            checkTestsRes()  //обновляем результаты
             checkTrialVariantsRes()
         }
         return binding.root
     }
 
-    private fun deleteResults() {
+    private fun deleteResults() {  //удаляет сохраненные в sharepref результаты
         val sharedPref = requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
-        for (i in 1..resources.getInteger(R.integer.test_count)){
+        for (i in 1..resources.getInteger(R.integer.test_count)){   //все тесты
             editor.remove("test${i}_done")
         }
-        editor.remove("pr1_res")
+        editor.remove("pr1_res")  //пробник
         editor.apply()
     }
 
-    private fun checkTestsRes(){
+    private fun checkTestsRes(){  //проверяет статистику по тестам
         val countTests = resources.getInteger(R.integer.test_count)
         var countDoneTests = 0
         var testRes:Boolean
@@ -55,19 +55,19 @@ class StatisticsFragment : Fragment() {
         val sharedPref = requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         for (i in 1..countTests){
             testRes = sharedPref.getBoolean("test${i}_done",false)
-            if(testRes){
+            if(testRes){    //проверяем выполнен ли тест, добавляем в строку соответсвующий текст
                 string += "Тест №$i - Выполнено \n"
                 countDoneTests++
             }else{
                 string += "Тест №$i - Не выполнено \n"
             }
-            binding.testResTextView.text = string
+            binding.testResTextView.text = string  //выставляем полученную строку в textview
         }
-        val percentDoneTests = countDoneTests*100 / countTests
+        val percentDoneTests = countDoneTests*100 / countTests  //определяем процент сделанных тестов
         string = "Тесты: ${percentDoneTests}%"
         binding.testResTitleTextView.text = string
     }
-    private fun checkTrialVariantsRes(){
+    private fun checkTrialVariantsRes(){  //проверяет пробники
         val sharedPref = requireContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE)
         val pr1Res = sharedPref.getString("pr1_res","-1")?.toInt()
         val string = if(pr1Res == -1){

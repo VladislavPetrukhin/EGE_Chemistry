@@ -28,7 +28,7 @@ class RecyclerViewTrialVariantsAdapter(
                 val position = bindingAdapterPosition
                 var text = ""
                 if (position != RecyclerView.NO_POSITION) {
-                    if(position < 29){
+                    if(position < 29){  //если нажали на номер задания, то тогда надо передать сохранный ответ
                         text = filledAnswers[position]
                     }
                     recyclerViewActivity.goToActivity(position,text)
@@ -50,19 +50,19 @@ class RecyclerViewTrialVariantsAdapter(
         val item: String = recyclerViewItems[position]
         holder.textView.text = item
         Log.d("RecyclerViewLog", position.toString())
-        val colorRes = if (isAnswersChecked) {
+        val colorRes = if (isAnswersChecked) {  //если проверка выполнена, тогда меняем цвет на зеленый или красный (правильно решен номер или нет)
             if (position < checkedAnswers.size && checkedAnswers[position]) {
                 R.color.positive_recycle_item_color
             } else if(position < 29) {
                 R.color.negative_recycle_item_color
-            }else{
+            }else{  //кнопки проверки и очистки не трогаем. белый или серый в зависимости от темы
                 if(isDarkTheme(context)){
                     R.color.default_dark_recycle_item_color
                 }else{
                     R.color.default_light_recycle_item_color
                 }
             }
-        } else {
+        } else { //если проверка не выполнена, тогда желтый если есть сохраненный ответ. если ответа нет, тогда дефолтный цвет в зависимости от темы
             if (position < filledAnswers.size && filledAnswers[position].isNotEmpty()) {
                 R.color.neutral_recycle_item_color
             } else {
@@ -75,7 +75,7 @@ class RecyclerViewTrialVariantsAdapter(
         }
         holder.itemView.setBackgroundColor(ContextCompat.getColor(context, colorRes))
     }
-    fun isDarkTheme(context: Context): Boolean {
+    private fun isDarkTheme(context: Context): Boolean {
         return context.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }

@@ -19,12 +19,12 @@ class RulesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = DataBindingUtil.inflate<FragmentRulesBinding>(
             inflater, R.layout.fragment_rules, container, false
         )
         val defaultSharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val fontSize = defaultSharedPref.getString("pref_key_font_size", resources.getInteger(R.integer.mediumTextSize).toString()).toString()
+        val fontSize = defaultSharedPref.getString("pref_key_font_size", resources.getInteger(R.integer.mediumTextSize).toString()).toString()  //размер шрифта
         binding.rulesTextView.textSize = fontSize.toFloat()
         return binding.root
     }
