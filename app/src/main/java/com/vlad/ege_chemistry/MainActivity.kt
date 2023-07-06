@@ -37,6 +37,7 @@ import com.vlad.ege_chemistry.fragments.RulesFragment
 import com.vlad.ege_chemistry.fragments.SettingsFragment
 import com.vlad.ege_chemistry.fragments.StatisticsFragment
 import java.util.Calendar
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "pref_key_notifications $notifyOn")
             if(notifyOn){   //если в pref включены уведы ,то тогда включаем ежедневные уведы
                 Log.d("NotifyLog","true")
-                //inflateNotificationContent(applicationContext)
+                //inflateNotificationContent(10)
                // showNotification(applicationContext)
                 setupDailyNotification()
             }
@@ -273,6 +274,14 @@ class MainActivity : AppCompatActivity() {
         }else{
             drawerLayout.openDrawer(GravityCompat.START)
         }
+    }
+    private fun inflateNotificationContent(notificationNumber: Int){ //заполняет текст уведомления
+        var textResourceId = resources.getIdentifier(
+            "notification_title$notificationNumber","string",packageName)
+        contentTitle = resources.getString(textResourceId)
+        textResourceId = resources.getIdentifier(
+            "notification_text$notificationNumber","string",packageName)
+        contentText = resources.getString(textResourceId)
     }
         private fun showNotification(context: Context) {  //выводит уведомление
         val intent = Intent(context, MainActivity::class.java).apply {

@@ -13,7 +13,7 @@
             android:summary="Выберите тему приложения"
             android:entries="@array/theme_options"
             android:entryValues="@array/theme_values"
-            android:defaultValue="light" />
+            android:defaultValue="system" />
         <ListPreference
             android:key="pref_key_font_size"
             android:title="Размер шрифта"

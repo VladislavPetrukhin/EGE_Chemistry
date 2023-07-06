@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import com.vlad.ege_chemistry.R
 import com.vlad.ege_chemistry.databinding.FragmentStatisticsBinding
@@ -30,9 +31,7 @@ class StatisticsFragment : Fragment() {
         checkTestsRes()
         checkTrialVariantsRes()
         binding.deleteResults.setOnClickListener {
-            deleteResults()  //удаляем статистику
-            checkTestsRes()  //обновляем результаты
-            checkTrialVariantsRes()
+            showAlertDialog()
         }
         return binding.root
     }
@@ -76,5 +75,23 @@ class StatisticsFragment : Fragment() {
             "Первый пробник: ${pr1Res}/29 правильно \n"
         }
         binding.probnikResTextView.text = string
+    }
+    private fun showAlertDialog() {  //справшивает действительно ли сбросить статичтику
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Сброс статистики")
+            .setMessage("Вы действительно хотите сбросить статистику?")
+            .setPositiveButton("Да") { dialog, _ ->
+                dialog.dismiss()
+                deleteResults()  //удаляем статистику
+                checkTestsRes()  //обновляем результаты
+                checkTrialVariantsRes()
+            }
+            .setNegativeButton("Нет") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false) // Запретить закрытие окна при нажатии вне его пределов
+
+        val dialog = builder.create()
+        dialog.show()
     }
 }

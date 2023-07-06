@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -81,10 +82,10 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         val intent: Intent
         when (position) {
             resources.getInteger(R.integer.exercisesInTrialVariants_count) -> {
-                checkAnswers() //проверка ответов
+                showAlertDialogCheck()
             }
             resources.getInteger(R.integer.exercisesInTrialVariants_count)+1 -> {
-                clearAnswers()  //очистка ответов
+                showAlertDialogDelete()
             }
             else -> {
                 intent = Intent(this, TrialVariantsActivity::class.java)
@@ -142,7 +143,7 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
 
         // Настройка параметров всплывающего окна
         popupWindow.isFocusable = true // Разрешить фокус на всплывающем окне
-        popupWindow.isOutsideTouchable = true // Разрешить закрытие всплывающего окна при касании за его пределами
+        popupWindow.isOutsideTouchable = false // Разрешить закрытие всплывающего окна при касании за его пределами
 
         // Отображение всплывающего окна
         val parentView: View = findViewById(R.id.recyclerViewTrialVariants)
@@ -167,5 +168,36 @@ class RecyclerViewTrialVariantsActivity : AppCompatActivity() {
         intent.putExtra("userSelectedMode","trialVariants")
         startActivity(intent)
     }
+    private fun showAlertDialogDelete() {  //справшивает подтверждение действия
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Сброс ответов")
+            .setMessage("Вы действительно хотите удалить ответы?")
+            .setPositiveButton("Да") { dialog, _ ->
+                dialog.dismiss()
+                clearAnswers()  //очистка ответов
+            }
+            .setNegativeButton("Нет") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false) // Запретить закрытие окна при нажатии вне его пределов
 
+        val dialog = builder.create()
+        dialog.show()
+    }
+    private fun showAlertDialogCheck() {  //справшивает подтверждение действия
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Проверка")
+            .setMessage("Вы действительно хотите проверить ответы?")
+            .setPositiveButton("Да") { dialog, _ ->
+                dialog.dismiss()
+                checkAnswers() //проверка ответов
+            }
+            .setNegativeButton("Нет") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false) // Запретить закрытие окна при нажатии вне его пределов
+
+        val dialog = builder.create()
+        dialog.show()
+    }
 }
