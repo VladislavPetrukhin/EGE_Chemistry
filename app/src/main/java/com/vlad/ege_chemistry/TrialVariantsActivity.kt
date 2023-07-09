@@ -64,7 +64,7 @@ class TrialVariantsActivity : AppCompatActivity() {
         Log.d(TAG, exercise.toString())
         val textResourceId =
             resources.getIdentifier("pr${prNumber}_$exercise", "string", packageName)
-        binding.testTrialTextView.text = resources.getString(textResourceId)
+        binding.testTrialTextView.text = resources.getText(textResourceId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

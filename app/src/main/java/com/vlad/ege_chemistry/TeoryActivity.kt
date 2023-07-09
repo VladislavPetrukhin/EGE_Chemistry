@@ -23,7 +23,7 @@ class TeoryActivity : AppCompatActivity() {
 
         var position = intent.getIntExtra("position",1).toString()
         var textResourceId = resources.getIdentifier("text$position","string",packageName)
-        binding.teoryTextView.text = resources.getString(textResourceId)  //выбираем текст в зависимости от позиции на которую нажали в recyclerview
+        binding.teoryTextView.text = resources.getText(textResourceId)  //выбираем текст в зависимости от позиции на которую нажали в recyclerview
 
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
