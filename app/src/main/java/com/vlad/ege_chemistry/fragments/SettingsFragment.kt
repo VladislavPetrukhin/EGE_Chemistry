@@ -23,7 +23,10 @@ import androidx.preference.PreferenceManager
 import com.vlad.ege_chemistry.R
 
 class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
+
+    private val appPackage = "com.vlad.ege_chemistry"
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
@@ -133,11 +136,11 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         // Запрашиваем разрешение на отправку уведомлений
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-            intent.putExtra(Settings.EXTRA_APP_PACKAGE, "com.vlad.ege_chemistry")
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, appPackage)
             activity.startActivityForResult(intent, requestCode)
         } else {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            val uri = Uri.fromParts("package", "com.vlad.ege_chemistry", null)
+            val uri = Uri.fromParts("package", appPackage, null)
             intent.data = uri
             activity.startActivityForResult(intent, requestCode)
         }

@@ -1,15 +1,13 @@
 package com.vlad.ege_chemistry.fragments
 
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.MediaController
-import android.widget.VideoView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-//import com.vlad.ege_chemistry.R
+import com.vlad.ege_chemistry.R
 import com.vlad.ege_chemistry.databinding.FragmentMotivationBinding
 
 
@@ -24,9 +22,9 @@ class MotivationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = DataBindingUtil.inflate<FragmentMotivationBinding>(
-            inflater, com.vlad.ege_chemistry.R.layout.fragment_motivation, container, false
+            inflater, R.layout.fragment_motivation, container, false
         )
-        binding.videoView.setVideoPath("android.resource://" + requireContext().packageName + "/" + com.vlad.ege_chemistry.R.raw.video)
+        binding.videoView.setVideoPath("android.resource://" + requireContext().packageName + "/" + R.raw.video)
 
         val mediaController = MediaController(requireContext())
         mediaController.setAnchorView(binding.videoView)
