@@ -21,8 +21,12 @@ class TeoryActivity : AppCompatActivity() {
         val fontSize = defaultSharedPref.getString("pref_key_font_size", resources.getInteger(R.integer.mediumTextSize).toString()).toString()
         binding.teoryTextView.textSize = fontSize.toFloat()  //меняем размер шрифта
 
-        var position = intent.getIntExtra("position",1).toString()
-        var textResourceId = resources.getIdentifier("text$position","string",packageName)
+        val position = intent.getIntExtra("position",1).toString()
+
+        var textResourceId = resources.getIdentifier("teory$position","string",packageName)
+        supportActionBar?.title = resources.getText(textResourceId)
+
+        textResourceId = resources.getIdentifier("text$position","string",packageName)
         binding.teoryTextView.text = resources.getText(textResourceId)  //выбираем текст в зависимости от позиции на которую нажали в recyclerview
 
     }

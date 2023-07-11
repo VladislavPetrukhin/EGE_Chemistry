@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             val sharedPref = applicationContext.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
             val notifyWereRefused = sharedPref.getBoolean("notifyWereRefused", false)
             Log.d(TAG, "notifyWereRefused $notifyWereRefused")
-            if(!notifyWereRefused){  //если пользователь не выбирал в диалоге про уведомления "больше не показывать", тогда спрашиваем разрешение на уведомления
+            if(!notifyWereRefused && executeCodeIfDayPassed()){  //если пользователь не выбирал в диалоге про уведомления "больше не показывать" и уже более суток не спрашивали, тогда спрашиваем разрешение на уведомления
                 showAlertDialog()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -326,6 +327,10 @@ class MainActivity : AppCompatActivity() {
                 requestNotificationPermission(this,103)
             }
             .setNegativeButton("Не сейчас") { dialog, _ ->  //если не сейчас закрываем диалог, потом спросим еще раз
+                val sharedPreferences: SharedPreferences = applicationContext.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putLong("lastExecutionTime", Calendar.getInstance().timeInMillis)  //сохраняем время когда последний раз спрашивали разрешение на показ уведомлений
+                editor.apply()
                 dialog.dismiss()
             }
             .setNeutralButton("Нет, больше не спрашивать") { dialog, _ ->  //закрываем диалог и больше не спрашиваем
@@ -339,5 +344,13 @@ class MainActivity : AppCompatActivity() {
 
         val dialog = builder.create()
         dialog.show()
+    }
+    private fun executeCodeIfDayPassed():Boolean { //проверяет не прошло ли больше суток (нужно для того, чтобы спрашивать разрешение на показ уведомлений не чаще раза в сутки, если они не включены
+        val sharedPreferences: SharedPreferences = applicationContext.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        val lastExecutionTime = sharedPreferences.getLong("lastExecutionTime", 0)
+        val currentTime = Calendar.getInstance().timeInMillis
+        val oneDayInMillis: Long = 24 * 60 * 60 * 1000
+
+        return currentTime - lastExecutionTime >= oneDayInMillis
     }
 }
